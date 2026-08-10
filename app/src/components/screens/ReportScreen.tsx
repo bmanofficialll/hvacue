@@ -37,7 +37,7 @@ export function ReportScreen({ state, actions }: { state: AppState; actions: Hva
 
   const report: [string, string][] = [
     ['EQUIPMENT', E.manufacturer + ' ' + E.model + ' ' + E.equipmentType.toLowerCase() + ', S/N ' + (E.serial || 'unrecorded') + ', ' + E.refrigerant + ', ' + E.capacityTons + ' tons, ' + E.voltage + '/' + E.phase + ', ' + E.meteringDevice + ' metering — ' + tree.siteName + '.'],
-    ['COMPLAINT', tree.complaintText],
+    ['COMPLAINT', d.symptom || tree.complaintText],
     ['MEASUREMENTS', measurementsText],
     ['DERIVED', derivedText],
     ['ROOT CAUSE', causes[0] ? causes[0].name + ' — ' + causes[0].pct + '% at close of diagnosis. ' + causes[0].why : '—'],

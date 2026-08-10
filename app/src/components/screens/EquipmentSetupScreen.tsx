@@ -71,6 +71,7 @@ function FieldGroup({ title, children }: { title: string; children: React.ReactN
 
 export function EquipmentSetupScreen({ state, actions }: { state: AppState; actions: HvacueActions }) {
   const [draft, setDraft] = useState<Equipment>(state.equipment);
+  const [symptom, setSymptom] = useState(state.symptom);
   const patch = (p: Partial<Equipment>) => setDraft((d) => ({ ...d, ...p }));
 
   const willUseSplitFlow = usesSplitTree(draft);
@@ -88,6 +89,19 @@ export function EquipmentSetupScreen({ state, actions }: { state: AppState; acti
       </div>
 
       <div style={{ padding: '0 18px', flex: 1 }}>
+        <FieldGroup title="REPORTED PROBLEM">
+          <div>
+            <div style={{ font: `500 10px/1 ${font.mono}`, color: color.textDim, letterSpacing: '.08em', marginBottom: 7 }}>WHAT'S THE CALL? (TYPE THE ALARM OR COMPLAINT)</div>
+            <textarea
+              value={symptom}
+              onChange={(e) => setSymptom(e.target.value)}
+              placeholder="e.g. No cooling, runs but warm · or a controller alarm like HI PRESS"
+              rows={2}
+              style={{ width: '100%', borderRadius: 10, background: color.card, border: `1px solid ${color.borderStrong}`, color: color.text, font: `500 13px/1.4 ${font.heading}`, padding: 12, resize: 'vertical' }}
+            />
+          </div>
+        </FieldGroup>
+
         <FieldGroup title="EQUIPMENT">
           <Select label="Manufacturer" value={draft.manufacturer} options={MANUFACTURERS} onChange={(v) => patch({ manufacturer: v })} />
           <TextField label="Model" value={draft.model} onChange={(v) => patch({ model: v })} placeholder="e.g. 30HXC-186" />
@@ -122,7 +136,7 @@ export function EquipmentSetupScreen({ state, actions }: { state: AppState; acti
       </div>
 
       <div style={{ padding: '22px 18px 0' }}>
-        <PrimaryButton onClick={() => actions.confirmEquipment(draft)}>CONFIRM &amp; DIAGNOSE</PrimaryButton>
+        <PrimaryButton onClick={() => actions.confirmEquipment(draft, symptom)}>CONFIRM &amp; DIAGNOSE</PrimaryButton>
       </div>
     </div>
   );

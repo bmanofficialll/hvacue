@@ -82,6 +82,7 @@ function FieldGroup({ title, children }: { title: string; children: React.ReactN
 
 export function EquipmentSetupScreen({ state, actions }: { state: AppState; actions: HvacueActions }) {
   const [draft, setDraft] = useState<Equipment>(state.equipment);
+  const [symptom, setSymptom] = useState(state.symptom);
   const patch = (p: Partial<Equipment>) => setDraft((d) => ({ ...d, ...p }));
 
   const willUseSplitFlow = usesSplitTree(draft);
@@ -101,6 +102,20 @@ export function EquipmentSetupScreen({ state, actions }: { state: AppState; acti
       </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 22 }}>
+        <FieldGroup title="REPORTED PROBLEM">
+          <View>
+            <Text style={[mono({ weight: 500, size: 10, letterSpacing: 0.8, color: color.textDim }), { marginBottom: 7 }]}>WHAT'S THE CALL? (TYPE THE ALARM OR COMPLAINT)</Text>
+            <TextInput
+              value={symptom}
+              onChangeText={setSymptom}
+              placeholder="e.g. No cooling, runs but warm · or an alarm like HI PRESS"
+              placeholderTextColor={color.textDimmer}
+              multiline
+              style={[heading({ weight: 500, size: 13, color: color.text }), { minHeight: 60, borderRadius: 10, backgroundColor: color.card, borderWidth: 1, borderColor: color.borderStrong, padding: 12, textAlignVertical: 'top' }]}
+            />
+          </View>
+        </FieldGroup>
+
         <FieldGroup title="EQUIPMENT">
           <SelectField label="Manufacturer" value={draft.manufacturer} options={MANUFACTURERS} onChange={(v) => patch({ manufacturer: v })} />
           <TextField label="Model" value={draft.model} onChange={(v) => patch({ model: v })} placeholder="e.g. 30HXC-186" />
@@ -134,7 +149,7 @@ export function EquipmentSetupScreen({ state, actions }: { state: AppState; acti
         )}
 
         <View style={{ marginTop: 22 }}>
-          <PrimaryButton onPress={() => actions.confirmEquipment(draft)}>CONFIRM & DIAGNOSE</PrimaryButton>
+          <PrimaryButton onPress={() => actions.confirmEquipment(draft, symptom)}>CONFIRM & DIAGNOSE</PrimaryButton>
         </View>
       </ScrollView>
     </View>

@@ -30,9 +30,9 @@ export function ScreenHeader({ title, subtitle, onBack, trailing }: { title: str
   );
 }
 
-export function SectionLabel({ children, style }: { children: ReactNode; style?: CSSProperties }) {
+export function SectionLabel({ children, style, color: c }: { children: ReactNode; style?: CSSProperties; color?: string }) {
   return (
-    <div style={{ font: `600 9.5px/1 ${font.mono}`, color: color.textDim, letterSpacing: '.16em', ...style }}>
+    <div style={{ font: `600 9.5px/1 ${font.mono}`, color: c ?? color.textDim, letterSpacing: '.16em', ...style }}>
       {children}
     </div>
   );

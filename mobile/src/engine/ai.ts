@@ -246,3 +246,34 @@ const GUIDANCE_SYSTEM =
 export async function askGuidance(s: AiSettings, question: string, context: string): Promise<string> {
   return dispatch(s, GUIDANCE_SYSTEM, `Current session context:\n${context}\n\nTechnician asks: ${question}`);
 }
+
+export interface AiDiagnosis {
+  mostLikely: string;
+  why: string;
+  nextStep: string;
+  cautions: string;
+  agreesWithEngine: boolean | null;
+  raw: string;
+}
+
+const DIAGNOSIS_SYSTEM =
+  'You are HVACue, a senior HVAC diagnostician giving an independent read on a live service call. ' +
+  'You are given structured field data plus the app\'s own rule-based ranking. Weigh the measured numbers, ' +
+  'agree or challenge the rule engine, and be concrete. Never invent manufacturer specifications; if a value ' +
+  'is missing or a refrigerant has no cached PT data, say what to measure or pull. If there is not enough data ' +
+  'to commit, set mostLikely to "Insufficient data" and say what to measure next. ' +
+  'Return ONLY JSON: {"mostLikely": string, "why": string, "nextStep": string, "cautions": string, "agreesWithEngine": boolean}. No prose outside JSON.';
+
+export async function runDiagnosis(s: AiSettings, context: string): Promise<AiDiagnosis> {
+  const raw = await dispatch(s, DIAGNOSIS_SYSTEM, `Diagnose this service call and return the JSON.\n\n${context}`);
+  const parsed = extractJson(raw) as Record<string, unknown>;
+  const str = (k: string) => (typeof parsed[k] === 'string' ? (parsed[k] as string) : '');
+  return {
+    mostLikely: str('mostLikely') || 'No assessment returned',
+    why: str('why'),
+    nextStep: str('nextStep'),
+    cautions: str('cautions'),
+    agreesWithEngine: typeof parsed.agreesWithEngine === 'boolean' ? (parsed.agreesWithEngine as boolean) : null,
+    raw,
+  };
+}

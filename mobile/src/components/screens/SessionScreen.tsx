@@ -3,7 +3,7 @@ import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { color, heading, mono } from '../../theme';
 import { deriveSession } from '../../state/derive';
-import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE, askGuidance, isAiConfigured } from '../../engine/ai';
+import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE, askGuidance, isAiConfigured, runDiagnosis, type AiDiagnosis } from '../../engine/ai';
 import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 import { BackButton, Card, Chip, ProgressBar, SectionLabel } from '../ui/primitives';
@@ -35,7 +35,22 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
   const [answer, setAnswer] = useState<string | null>(null);
   const [askBusy, setAskBusy] = useState(false);
   const [askErr, setAskErr] = useState<string | null>(null);
+  const [diag, setDiag] = useState<AiDiagnosis | null>(null);
+  const [diagBusy, setDiagBusy] = useState(false);
+  const [diagErr, setDiagErr] = useState<string | null>(null);
   const aiOn = isAiConfigured(state.ai);
+
+  async function runAiDiag() {
+    setDiagBusy(true);
+    setDiagErr(null);
+    try {
+      setDiag(await runDiagnosis(state.ai, d.aiContext));
+    } catch (e) {
+      setDiagErr(e instanceof Error ? e.message : 'AI diagnosis failed.');
+    } finally {
+      setDiagBusy(false);
+    }
+  }
 
   async function ask() {
     if (!question.trim()) return;
@@ -227,6 +242,52 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
                 </View>
               ))}
             </View>
+          )}
+
+          {/* AI second-opinion diagnosis on the whole picture */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 22, marginBottom: 10 }}>
+            <SectionLabel color={color.cyan}>AI DIAGNOSIS</SectionLabel>
+            {aiOn && d.loggedCount >= 2 && (
+              <Pressable onPress={diagBusy ? undefined : runAiDiag}>
+                <Text style={mono({ weight: 700, size: 9, letterSpacing: 1, color: color.cyan })}>{diagBusy ? 'THINKING…' : diag ? 'RE-RUN ↻' : 'RUN AI DIAGNOSIS ›'}</Text>
+              </Pressable>
+            )}
+          </View>
+          {!aiOn ? (
+            <AiPlaceholder message="Connect an AI provider and HVACue will give a second-opinion diagnosis on your whole reading set — agreeing with or challenging the rule engine." compact onConnect={() => actions.openSettings('session')} />
+          ) : d.loggedCount < 2 ? (
+            <View style={{ borderRadius: 12, backgroundColor: color.cardAlt, borderWidth: 1, borderColor: color.border, padding: 14 }}>
+              <Text style={heading({ weight: 500, size: 11.5, lineHeight: 17, color: color.textMuted })}>Log at least two readings and I'll run an AI diagnosis across the whole picture.</Text>
+            </View>
+          ) : diagErr ? (
+            <View style={{ borderRadius: 12, backgroundColor: color.redBg09, borderWidth: 1, borderColor: color.redBorder35, padding: 14 }}>
+              <Text style={heading({ weight: 500, size: 11.5, lineHeight: 17, color: color.redSoft })}>{diagErr}</Text>
+            </View>
+          ) : diag ? (
+            <View style={{ borderRadius: 12, backgroundColor: color.cyanBg07, borderWidth: 1, borderColor: color.cyanBorder, padding: 15 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Text style={[mono({ weight: 600, size: 9, letterSpacing: 1.2, color: color.cyan }), { flex: 1 }]}>AI SECOND OPINION</Text>
+                {diag.agreesWithEngine !== null && (
+                  <View style={{ paddingHorizontal: 6, paddingVertical: 4, borderRadius: 5, borderWidth: 1, borderColor: diag.agreesWithEngine ? color.greenBorder4 : color.amberBorder35 }}>
+                    <Text style={mono({ weight: 700, size: 8, letterSpacing: 0.8, color: diag.agreesWithEngine ? color.green : color.amber })}>{diag.agreesWithEngine ? 'AGREES WITH ENGINE' : 'CHALLENGES ENGINE'}</Text>
+                  </View>
+                )}
+              </View>
+              <Text style={[heading({ weight: 600, size: 16, lineHeight: 20 }), { marginTop: 10 }]}>{diag.mostLikely}</Text>
+              {!!diag.why && <Text style={[heading({ weight: 400, size: 12.5, lineHeight: 20, color: color.textBody }), { marginTop: 9 }]}>{diag.why}</Text>}
+              {!!diag.nextStep && (
+                <View style={{ marginTop: 12, borderTopWidth: 1, borderColor: color.borderMed, paddingTop: 11 }}>
+                  <Text style={mono({ weight: 600, size: 8.5, letterSpacing: 1, color: color.cyan })}>AI SUGGESTS NEXT</Text>
+                  <Text style={[heading({ weight: 500, size: 12, lineHeight: 18, color: color.textBody }), { marginTop: 7 }]}>{diag.nextStep}</Text>
+                </View>
+              )}
+              {!!diag.cautions && <Text style={[heading({ weight: 500, size: 11, lineHeight: 16, color: color.redSoft }), { marginTop: 11 }]}>⚠ {diag.cautions}</Text>}
+              <Text style={[mono({ weight: 500, size: 9, lineHeight: 14, color: color.textDimmer }), { marginTop: 12 }]}>AI OPINION — CROSS-CHECK AGAINST THE RULE ENGINE AND MANUFACTURER DATA.</Text>
+            </View>
+          ) : (
+            <Pressable onPress={runAiDiag} style={{ height: 50, borderRadius: 12, borderWidth: 1, borderColor: color.cyanBorder, backgroundColor: color.cyanBg07, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={mono({ weight: 700, size: 11.5, letterSpacing: 1, color: color.cyan })}>✨  RUN AI DIAGNOSIS</Text>
+            </Pressable>
           )}
 
           <Text style={[mono({ weight: 600, size: 9.5, letterSpacing: 1.6, color: color.textDim }), { marginTop: 22, marginBottom: 10 }]}>

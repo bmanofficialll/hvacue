@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { color, font } from '../../theme';
 import { deriveSession } from '../../state/derive';
-import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE, askGuidance, isAiConfigured } from '../../engine/ai';
+import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE, askGuidance, isAiConfigured, runDiagnosis, type AiDiagnosis } from '../../engine/ai';
 import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 import { BackButton, Card, Chip, ProgressBar, SectionLabel } from '../ui/primitives';
@@ -33,7 +33,22 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
   const [answer, setAnswer] = useState<string | null>(null);
   const [askBusy, setAskBusy] = useState(false);
   const [askErr, setAskErr] = useState<string | null>(null);
+  const [diag, setDiag] = useState<AiDiagnosis | null>(null);
+  const [diagBusy, setDiagBusy] = useState(false);
+  const [diagErr, setDiagErr] = useState<string | null>(null);
   const aiOn = isAiConfigured(state.ai);
+
+  async function runAiDiag() {
+    setDiagBusy(true);
+    setDiagErr(null);
+    try {
+      setDiag(await runDiagnosis(state.ai, d.aiContext));
+    } catch (e) {
+      setDiagErr(e instanceof Error ? e.message : 'AI diagnosis failed.');
+    } finally {
+      setDiagBusy(false);
+    }
+  }
 
   async function ask() {
     if (!question.trim()) return;
@@ -209,6 +224,55 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
                   <div style={{ font: `500 11px/1.5 ${font.heading}`, color: color.textMuted, marginTop: 9 }}>{c.why}</div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* AI second-opinion diagnosis on the whole picture */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '22px 0 10px' }}>
+            <SectionLabel color={color.cyan}>AI DIAGNOSIS</SectionLabel>
+            {aiOn && d.loggedCount >= 2 && (
+              <div onClick={diagBusy ? undefined : runAiDiag} style={{ font: `700 9px/1 ${font.mono}`, color: color.cyan, letterSpacing: '.1em', cursor: diagBusy ? 'default' : 'pointer' }}>
+                {diagBusy ? 'THINKING…' : diag ? 'RE-RUN ↻' : 'RUN AI DIAGNOSIS ›'}
+              </div>
+            )}
+          </div>
+          {!aiOn ? (
+            <AiPlaceholder message="Connect an AI provider and HVACue will give a second-opinion diagnosis on your whole reading set — agreeing with or challenging the rule engine." compact onConnect={() => actions.openSettings('session')} />
+          ) : d.loggedCount < 2 ? (
+            <div style={{ borderRadius: 12, background: color.cardAlt, border: `1px solid ${color.border}`, padding: 14, font: `500 11.5px/1.5 ${font.heading}`, color: color.textMuted }}>
+              Log at least two readings and I'll run an AI diagnosis across the whole picture.
+            </div>
+          ) : diagErr ? (
+            <div style={{ borderRadius: 12, background: color.redBg09, border: `1px solid ${color.redBorder35}`, padding: 14, font: `500 11.5px/1.5 ${font.heading}`, color: color.redSoft }}>{diagErr}</div>
+          ) : diag ? (
+            <div style={{ borderRadius: 12, background: color.cyanBg07, border: `1px solid ${color.cyanBorder}`, padding: 15 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ font: `600 9px/1 ${font.mono}`, color: color.cyan, letterSpacing: '.12em', flex: 1 }}>AI SECOND OPINION</div>
+                {diag.agreesWithEngine !== null && (
+                  <div style={{ font: `700 8px/1 ${font.mono}`, letterSpacing: '.08em', padding: '4px 6px', borderRadius: 5, color: diag.agreesWithEngine ? color.green : color.amber, border: `1px solid ${diag.agreesWithEngine ? color.greenBorder4 : color.amberBorder35}` }}>
+                    {diag.agreesWithEngine ? 'AGREES WITH ENGINE' : 'CHALLENGES ENGINE'}
+                  </div>
+                )}
+              </div>
+              <div style={{ font: `600 16px/1.25 ${font.heading}`, marginTop: 10 }}>{diag.mostLikely}</div>
+              {diag.why && <div style={{ font: `400 12.5px/1.6 ${font.heading}`, color: color.textBody, marginTop: 9 }}>{diag.why}</div>}
+              {diag.nextStep && (
+                <div style={{ marginTop: 12, borderTop: `1px solid ${color.borderMed}`, paddingTop: 11 }}>
+                  <div style={{ font: `600 8.5px/1 ${font.mono}`, color: color.cyan, letterSpacing: '.1em' }}>AI SUGGESTS NEXT</div>
+                  <div style={{ font: `500 12px/1.55 ${font.heading}`, color: color.textBody, marginTop: 7 }}>{diag.nextStep}</div>
+                </div>
+              )}
+              {diag.cautions && (
+                <div style={{ marginTop: 11, font: `500 11px/1.5 ${font.heading}`, color: color.redSoft }}>⚠ {diag.cautions}</div>
+              )}
+              <div style={{ font: `500 9px/1.5 ${font.mono}`, color: color.textDimmer, marginTop: 12 }}>AI OPINION — CROSS-CHECK AGAINST THE RULE ENGINE AND MANUFACTURER DATA.</div>
+            </div>
+          ) : (
+            <div
+              onClick={runAiDiag}
+              style={{ height: 50, borderRadius: 12, border: `1px solid ${color.cyanBorder}`, background: color.cyanBg07, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `700 11.5px/1 ${font.mono}`, color: color.cyan, letterSpacing: '.1em', cursor: 'pointer' }}
+            >
+              ✨&nbsp;&nbsp;RUN AI DIAGNOSIS
             </div>
           )}
 

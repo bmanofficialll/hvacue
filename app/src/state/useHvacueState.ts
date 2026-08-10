@@ -15,6 +15,7 @@ const initialState: AppState = {
   screen: 'home',
   equipment: DEFAULT_EQUIPMENT,
   equipmentConfirmed: false,
+  symptom: '',
   activeTreeId: initialTree.id,
   mode: 'beginner',
   teach: false,
@@ -81,13 +82,14 @@ export function useHvacueState() {
     setState((s) => ({ ...s, screen: 'equipmentSetup', setupReturnScreen: returnScreen }));
   }, []);
 
-  const confirmEquipment = useCallback((equipment: Equipment) => {
+  const confirmEquipment = useCallback((equipment: Equipment, symptom?: string) => {
     setState((s) => {
       const tree = selectTree(equipment);
       const treeChanged = tree.id !== s.activeTreeId;
       return {
         ...s,
         equipment,
+        symptom: symptom !== undefined ? symptom : s.symptom,
         equipmentConfirmed: true,
         activeTreeId: tree.id,
         screen: s.setupReturnScreen,

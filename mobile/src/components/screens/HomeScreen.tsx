@@ -96,7 +96,7 @@ export function HomeScreen({ state, actions }: { state: AppState; actions: Hvacu
             <View style={{ flex: 1 }}>
               <Text style={mono({ weight: 500, size: 10, letterSpacing: 1, color: color.amber })}>{derived.tree.jobNo} · IN PROGRESS</Text>
               <Text style={[heading({ weight: 600, size: 14, lineHeight: 17 }), { marginTop: 6 }]}>{state.equipment.model} · {state.equipment.equipmentType}</Text>
-              <Text style={[heading({ weight: 500, size: 11, color: color.textDim }), { marginTop: 4 }]}>{derived.tree.alarmText.replace('ALM: ', '')} · {derived.tree.siteName}</Text>
+              <Text style={[heading({ weight: 500, size: 11, color: color.textDim }), { marginTop: 4 }]}>{derived.alarmDisplay.replace('ALM: ', '')} · {derived.tree.siteName}</Text>
             </View>
             <Text style={heading({ weight: 600, size: 12, color: color.textDim })}>›</Text>
           </Pressable>

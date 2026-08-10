@@ -12,6 +12,8 @@ export interface AppState {
   screen: Screen;
   equipment: Equipment;
   equipmentConfirmed: boolean;
+  /** Free-text reported problem / alarm the technician types in. */
+  symptom: string;
   activeTreeId: string;
   mode: 'beginner' | 'tech';
   teach: boolean;

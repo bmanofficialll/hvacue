@@ -28,6 +28,8 @@ export interface SessionChip {
 export function deriveSession(state: AppState) {
   const tree = selectTree(state.equipment);
   const E = state.equipment;
+  const symptom = state.symptom.trim();
+  const alarmDisplay = symptom || tree.alarmText;
   const readings = state.readings;
   const metrics = tree.metrics(readings, E.refrigerant);
   const causes = computeCauses(tree, readings, metrics);
@@ -80,7 +82,7 @@ export function deriveSession(state: AppState) {
     { t: E.compressor.toUpperCase(), bg: color.card, fg: color.textRow },
     { t: E.circuits + ' CIRCUIT' + (E.circuits === 1 ? '' : 'S'), bg: color.card, fg: color.textRow },
     { t: E.meteringDevice.toUpperCase(), bg: color.card, fg: color.textRow },
-    { t: tree.alarmText, bg: color.redBg12, fg: color.redSoft },
+    { t: alarmDisplay, bg: color.redBg12, fg: color.redSoft },
   ];
 
   const brandNote = E.manufacturer === 'Generic / unknown'
@@ -107,8 +109,23 @@ export function deriveSession(state: AppState) {
     walkthrough = { phase: 'MEASURE', headline: 'Keep working the sequence.', body: 'Follow the next-step card below.' };
   }
 
+  // Rich structured context handed to the AI for the second-opinion diagnosis
+  // and the free-form Ask box — everything the tech has measured so far.
+  const loggedList = tree.order.filter((k) => readings[k] != null).map((k) => `${tree.defs[k].label} = ${readings[k]} ${tree.defs[k].unit}`).join('; ');
+  const derivedList = derivedMetrics.map((m) => `${m.label} ${m.value} (${m.tag})`).join('; ');
+  const engineRank = causes.slice(0, 4).map((c) => `${c.name} ${c.pctText}`).join(', ');
+  const aiContext = [
+    `Equipment: ${E.manufacturer} ${E.model}, ${E.equipmentType}, ${E.refrigerant}${hasPt ? '' : ' (no cached PT table on device)'}, ${E.capacityTons} tons, ${E.voltage}/${E.phase}, ${E.meteringDevice} metering, ${E.compressor} compressor, ${E.circuits} circuit(s).`,
+    `Reported problem / alarm: ${alarmDisplay}.`,
+    `Measured readings: ${loggedList || 'none logged yet'}.`,
+    `Derived values: ${derivedList || 'none computed yet'}.`,
+    flagText ? `Data-check warnings: ${flagText}` : '',
+    `HVACue rule-engine ranking: ${engineRank || 'not enough data to rank'}.`,
+  ].filter(Boolean).join('\n');
+
   return {
     walkthrough,
+    alarmDisplay, symptom, aiContext,
     tree, readings, metrics, causes, loggedCount, flagText, hasFlag: flagText.length > 0,
     nextStep, derivedMetrics, canRepair, verify, hasPt,
     evidenceTag: evidenceTag(loggedCount),
