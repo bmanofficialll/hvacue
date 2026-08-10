@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { color, font } from '../../theme';
+import { analyzeFaultCode, isAiConfigured } from '../../engine/ai';
+import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 import { Card, ScreenHeader } from '../ui/primitives';
 import { PhotoCapture } from '../ui/PhotoCapture';
@@ -12,8 +14,9 @@ const CODE_REFERENCE = [
   { code: 'dF / DEFROST', meaning: 'Defrost active or defrost fault on a heat pump — check reversing valve and defrost sensor.', tree: false },
 ];
 
-export function FaultScreen({ actions }: { actions: HvacueActions }) {
+export function FaultScreen({ state, actions }: { state: AppState; actions: HvacueActions }) {
   const [selected, setSelected] = useState<string | null>(null);
+  const [aiResult, setAiResult] = useState<{ code: string; meaning: string } | null>(null);
 
   return (
     <div style={{ flex: 1, overflow: 'auto', padding: '32px 0 40px' }}>
@@ -23,7 +26,22 @@ export function FaultScreen({ actions }: { actions: HvacueActions }) {
           title="CONTROLLER DISPLAY"
           hint="Hold the phone square to the display so the code is sharp"
           aiMessage="AI code-reading is not connected yet. For now, match the code you see to the reference list below, or start a guided session."
+          aiConfigured={isAiConfigured(state.ai)}
+          onConnect={() => actions.openSettings('fault')}
+          analyzeLabel="READ CODE WITH AI"
+          onAnalyze={async (img) => {
+            const res = await analyzeFaultCode(state.ai, img);
+            setAiResult(res);
+          }}
         />
+
+        {aiResult && (
+          <div style={{ marginTop: 14, borderRadius: 12, background: color.cyanBg07, border: `1px solid ${color.cyanBorder}`, padding: 15 }}>
+            <div style={{ font: `600 9.5px/1 ${font.mono}`, color: color.cyan, letterSpacing: '.12em' }}>AI READ · VERIFY BEFORE ACTING</div>
+            <div style={{ font: `600 18px/1.2 ${font.heading}`, marginTop: 9 }}>{aiResult.code}</div>
+            <div style={{ font: `500 12.5px/1.55 ${font.heading}`, color: color.textBody, marginTop: 8 }}>{aiResult.meaning}</div>
+          </div>
+        )}
 
         <div style={{ margin: '20px 0 10px', font: `600 9.5px/1 ${font.mono}`, color: color.textDim, letterSpacing: '.16em' }}>COMMON CODE REFERENCE · TAP ONE</div>
         <Card>

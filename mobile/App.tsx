@@ -10,6 +10,7 @@ import { CalcScreen } from './src/components/screens/CalcScreen';
 import { HistoryScreen } from './src/components/screens/HistoryScreen';
 import { TrainingScreen } from './src/components/screens/TrainingScreen';
 import { ReportScreen } from './src/components/screens/ReportScreen';
+import { SettingsScreen } from './src/components/screens/SettingsScreen';
 import { KeypadSheet } from './src/components/sheets/KeypadSheet';
 import { RepairSheet } from './src/components/sheets/RepairSheet';
 import { VoiceOverlay } from './src/components/sheets/VoiceOverlay';
@@ -29,12 +30,13 @@ export default function App() {
     case 'home': screen = <HomeScreen state={state} actions={actions} />; break;
     case 'equipmentSetup': screen = <EquipmentSetupScreen state={state} actions={actions} />; break;
     case 'session': screen = <SessionScreen state={state} actions={actions} />; break;
-    case 'fault': screen = <FaultScreen actions={actions} />; break;
+    case 'fault': screen = <FaultScreen state={state} actions={actions} />; break;
     case 'scan': screen = <ScanScreen state={state} actions={actions} />; break;
     case 'calc': screen = <CalcScreen state={state} actions={actions} />; break;
     case 'history': screen = <HistoryScreen actions={actions} />; break;
     case 'training': screen = <TrainingScreen state={state} actions={actions} />; break;
     case 'report': screen = <ReportScreen state={state} actions={actions} />; break;
+    case 'settings': screen = <SettingsScreen state={state} actions={actions} />; break;
   }
 
   return (

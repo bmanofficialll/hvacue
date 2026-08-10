@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { color, font } from '../../theme';
 import { deriveSession } from '../../state/derive';
-import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE } from '../../engine/ai';
+import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE, askGuidance, isAiConfigured } from '../../engine/ai';
 import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 import { BackButton, Card, Chip, ProgressBar, SectionLabel } from '../ui/primitives';
 import { PhotoCapture } from '../ui/PhotoCapture';
 import { AiPlaceholder } from '../ui/AiPlaceholder';
+
+function sessionContext(d: ReturnType<typeof deriveSession>, eqLabel: string): string {
+  const readings = d.readingRows.filter((r) => r.display !== '——').map((r) => `${r.label}: ${r.display}`).join('; ');
+  const top = d.causes[0] ? `${d.causes[0].name} (${d.causes[0].pctText})` : 'not yet ranked';
+  return `Equipment: ${eqLabel}. Alarm: ${d.tree.alarmText}. Readings: ${readings || 'none yet'}. Top ranked cause: ${top}.`;
+}
 import type { RankedCause } from '../../engine/engine';
 
 function causeColor(rank: RankedCause['rank']) {
@@ -23,6 +29,26 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
   const { tree, causes, nextStep } = d;
   const [showPhoto, setShowPhoto] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [askBusy, setAskBusy] = useState(false);
+  const [askErr, setAskErr] = useState<string | null>(null);
+  const aiOn = isAiConfigured(state.ai);
+
+  async function ask() {
+    if (!question.trim()) return;
+    setAskBusy(true);
+    setAskErr(null);
+    setAnswer(null);
+    try {
+      const reply = await askGuidance(state.ai, question.trim(), sessionContext(d, `${state.equipment.manufacturer} ${state.equipment.model} ${state.equipment.equipmentType}`));
+      setAnswer(reply);
+    } catch (e) {
+      setAskErr(e instanceof Error ? e.message : 'AI request failed.');
+    } finally {
+      setAskBusy(false);
+    }
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -54,7 +80,30 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
             </div>
             <div style={{ font: `600 14px/1.3 ${font.heading}`, marginTop: 9 }}>{d.walkthrough.headline}</div>
             <div style={{ font: `500 12px/1.55 ${font.heading}`, color: color.textBody, marginTop: 7 }}>{d.walkthrough.body}</div>
-            {showGuide && <div style={{ marginTop: 12 }}><AiPlaceholder message={AI_GUIDANCE_OFF_MESSAGE} compact /></div>}
+            {showGuide && (
+              <div style={{ marginTop: 12 }}>
+                {aiOn ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <input
+                        value={question}
+                        onChange={(e) => setQuestion(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') ask(); }}
+                        placeholder="Ask HVACue about this unit…"
+                        style={{ flex: 1, height: 44, borderRadius: 10, background: color.card, border: `1px solid ${color.borderStrong}`, color: color.text, font: `500 12.5px/1 ${font.heading}`, padding: '0 12px' }}
+                      />
+                      <div onClick={askBusy ? undefined : ask} style={{ height: 44, padding: '0 16px', borderRadius: 10, background: color.cyan, color: color.cyanOn, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `700 11px/1 ${font.mono}`, letterSpacing: '.08em', cursor: askBusy ? 'default' : 'pointer', opacity: askBusy ? 0.7 : 1 }}>
+                        {askBusy ? '…' : 'ASK'}
+                      </div>
+                    </div>
+                    {answer && <div style={{ borderRadius: 10, background: color.card, border: `1px solid ${color.border}`, padding: 13, font: `400 12.5px/1.6 ${font.heading}`, color: color.textBody, whiteSpace: 'pre-wrap' }}>{answer}</div>}
+                    {askErr && <div style={{ borderRadius: 10, background: color.redBg09, border: `1px solid ${color.redBorder35}`, padding: 12, font: `500 11.5px/1.5 ${font.heading}`, color: color.redSoft }}>{askErr}</div>}
+                  </div>
+                ) : (
+                  <AiPlaceholder message={AI_GUIDANCE_OFF_MESSAGE} compact onConnect={() => actions.openSettings('session')} />
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -85,6 +134,8 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
                 title="EQUIPMENT / GAUGE PHOTO"
                 hint="Photograph the unit, wiring, board, or gauge set for your records"
                 aiMessage={AI_OFF_MESSAGE}
+                aiConfigured={aiOn}
+                onConnect={() => actions.openSettings('session')}
               />
             </div>
           )}

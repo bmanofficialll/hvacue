@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { color, heading, mono } from '../../theme';
+import { isAiConfigured } from '../../engine/ai';
 import { Blip } from '../ui/Blip';
 import { deriveSession } from '../../state/derive';
 import type { AppState } from '../../state/types';
@@ -19,6 +20,7 @@ const TILES: { n: string; title: string; sub: string; target: Screen }[] = [
 export function HomeScreen({ state, actions }: { state: AppState; actions: HvacueActions }) {
   const derived = state.equipmentConfirmed ? deriveSession(state) : null;
   const hasOpenSession = !!derived && derived.loggedCount > 0;
+  const aiOn = isAiConfigured(state.ai);
 
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 18, paddingBottom: 34 }}>
@@ -38,6 +40,12 @@ export function HomeScreen({ state, actions }: { state: AppState; actions: Hvacu
             <Text style={mono({ weight: 600, size: 10, letterSpacing: 0.8, color: state.mode === 'tech' ? color.amberOn : color.textDim })}>TECH</Text>
           </Pressable>
         </View>
+        <Pressable
+          onPress={() => actions.openSettings('home')}
+          style={{ width: 34, height: 34, borderRadius: 9, backgroundColor: '#15191D', borderWidth: 1, borderColor: aiOn ? color.cyanBorder : 'rgba(255,255,255,.08)', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Text style={mono({ weight: 700, size: 11, color: aiOn ? color.cyan : color.textDim })}>AI</Text>
+        </Pressable>
       </View>
 
       <Pressable onPress={() => actions.openEquipmentSetup('session')}>

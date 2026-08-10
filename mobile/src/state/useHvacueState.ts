@@ -1,9 +1,13 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DEFAULT_EQUIPMENT } from '../engine/equipment';
 import { selectTree } from '../engine/engine';
 import { CALCULATORS, defaultCalcValues } from '../engine/calculators';
+import { DEFAULT_AI_SETTINGS, type AiSettings } from '../engine/ai';
+import { storageGet, storageSet, storageDelete } from '../platform/storage';
 import type { Equipment } from '../engine/types';
 import type { AppState, Screen } from './types';
+
+const AI_STORAGE_KEY = 'hvacue.ai.settings';
 
 const initialTree = selectTree(DEFAULT_EQUIPMENT);
 
@@ -24,14 +28,45 @@ const initialState: AppState = {
   activeCalc: CALCULATORS[0].id,
   calcValues: defaultCalcValues(),
   trainingTopic: null,
+  ai: DEFAULT_AI_SETTINGS,
+  settingsReturnScreen: 'home',
   setupReturnScreen: 'session',
 };
 
 export function useHvacueState() {
   const [state, setState] = useState<AppState>(initialState);
 
+  // Load any saved AI settings once on startup.
+  useEffect(() => {
+    let alive = true;
+    storageGet(AI_STORAGE_KEY).then((raw) => {
+      if (!alive || !raw) return;
+      try {
+        const parsed = JSON.parse(raw) as Partial<AiSettings>;
+        setState((s) => ({ ...s, ai: { ...s.ai, ...parsed } }));
+      } catch {
+        /* ignore corrupt settings */
+      }
+    });
+    return () => { alive = false; };
+  }, []);
+
   const go = useCallback((screen: Screen) => {
     setState((s) => ({ ...s, screen, voiceOpen: false }));
+  }, []);
+
+  const openSettings = useCallback((returnScreen: Screen) => {
+    setState((s) => ({ ...s, screen: 'settings', settingsReturnScreen: returnScreen }));
+  }, []);
+
+  const setAiSettings = useCallback((ai: AiSettings) => {
+    setState((s) => ({ ...s, ai }));
+    if (ai.apiKey.trim()) storageSet(AI_STORAGE_KEY, JSON.stringify(ai));
+    else storageDelete(AI_STORAGE_KEY);
+  }, []);
+
+  const prefillEquipment = useCallback((fields: Partial<Equipment>) => {
+    setState((s) => ({ ...s, equipment: { ...s.equipment, ...fields }, screen: 'equipmentSetup', setupReturnScreen: 'session' }));
   }, []);
 
   const setMode = useCallback((mode: 'beginner' | 'tech') => {
@@ -126,9 +161,10 @@ export function useHvacueState() {
     go, setMode, toggleTeach, openEquipmentSetup, confirmEquipment,
     openKeypad, closeKeypad, pressKey, commitReading,
     selectCalc, openTraining, closeTraining,
+    openSettings, setAiSettings, prefillEquipment,
     openRepair, closeRepair, selectRepair,
     openVoice, closeVoice, backToRanking,
-  }), [go, setMode, toggleTeach, openEquipmentSetup, confirmEquipment, openKeypad, closeKeypad, pressKey, commitReading, selectCalc, openTraining, closeTraining, openRepair, closeRepair, selectRepair, openVoice, closeVoice, backToRanking]);
+  }), [go, setMode, toggleTeach, openEquipmentSetup, confirmEquipment, openKeypad, closeKeypad, pressKey, commitReading, selectCalc, openTraining, closeTraining, openSettings, setAiSettings, prefillEquipment, openRepair, closeRepair, selectRepair, openVoice, closeVoice, backToRanking]);
 
   return { state, actions };
 }

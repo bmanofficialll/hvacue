@@ -1,6 +1,7 @@
 import type { Equipment, Readings } from '../engine/types';
+import type { AiSettings } from '../engine/ai';
 
-export type Screen = 'home' | 'equipmentSetup' | 'session' | 'fault' | 'scan' | 'calc' | 'history' | 'training' | 'report';
+export type Screen = 'home' | 'equipmentSetup' | 'session' | 'fault' | 'scan' | 'calc' | 'history' | 'training' | 'report' | 'settings';
 
 export interface Keypad {
   id: string;
@@ -27,6 +28,10 @@ export interface AppState {
   calcValues: Record<string, Record<string, number>>;
   /** Which training lesson is open (null = the skill-map index). */
   trainingTopic: string | null;
+  /** Connected AI provider settings (bring-your-own-key). */
+  ai: AiSettings;
+  /** Where the Settings screen returns to when closed. */
+  settingsReturnScreen: Screen;
   /** Where DIAGNOSE / RESCAN should land after equipment setup is confirmed. */
   setupReturnScreen: Screen;
 }

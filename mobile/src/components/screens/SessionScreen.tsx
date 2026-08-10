@@ -1,14 +1,20 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { color, heading, mono } from '../../theme';
 import { deriveSession } from '../../state/derive';
-import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE } from '../../engine/ai';
+import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE, askGuidance, isAiConfigured } from '../../engine/ai';
 import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 import { BackButton, Card, Chip, ProgressBar, SectionLabel } from '../ui/primitives';
 import { PhotoCapture } from '../ui/PhotoCapture';
 import { AiPlaceholder } from '../ui/AiPlaceholder';
+
+function sessionContext(d: ReturnType<typeof deriveSession>, eqLabel: string): string {
+  const readings = d.readingRows.filter((r) => r.display !== '——').map((r) => `${r.label}: ${r.display}`).join('; ');
+  const top = d.causes[0] ? `${d.causes[0].name} (${d.causes[0].pctText})` : 'not yet ranked';
+  return `Equipment: ${eqLabel}. Alarm: ${d.tree.alarmText}. Readings: ${readings || 'none yet'}. Top ranked cause: ${top}.`;
+}
 import type { RankedCause } from '../../engine/engine';
 
 function causeColor(rank: RankedCause['rank']) {
@@ -25,6 +31,26 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
   const { tree, causes, nextStep } = d;
   const [showPhoto, setShowPhoto] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [askBusy, setAskBusy] = useState(false);
+  const [askErr, setAskErr] = useState<string | null>(null);
+  const aiOn = isAiConfigured(state.ai);
+
+  async function ask() {
+    if (!question.trim()) return;
+    setAskBusy(true);
+    setAskErr(null);
+    setAnswer(null);
+    try {
+      const reply = await askGuidance(state.ai, question.trim(), sessionContext(d, `${state.equipment.manufacturer} ${state.equipment.model} ${state.equipment.equipmentType}`));
+      setAnswer(reply);
+    } catch (e) {
+      setAskErr(e instanceof Error ? e.message : 'AI request failed.');
+    } finally {
+      setAskBusy(false);
+    }
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -58,7 +84,39 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
             </View>
             <Text style={[heading({ weight: 600, size: 14, lineHeight: 18 }), { marginTop: 9 }]}>{d.walkthrough.headline}</Text>
             <Text style={[heading({ weight: 500, size: 12, lineHeight: 18, color: color.textBody }), { marginTop: 7 }]}>{d.walkthrough.body}</Text>
-            {showGuide && <View style={{ marginTop: 12 }}><AiPlaceholder message={AI_GUIDANCE_OFF_MESSAGE} compact /></View>}
+            {showGuide && (
+              <View style={{ marginTop: 12 }}>
+                {aiOn ? (
+                  <View style={{ gap: 9 }}>
+                    <View style={{ flexDirection: 'row', gap: 8 }}>
+                      <TextInput
+                        value={question}
+                        onChangeText={setQuestion}
+                        onSubmitEditing={ask}
+                        placeholder="Ask HVACue about this unit…"
+                        placeholderTextColor={color.textDimmer}
+                        style={[heading({ weight: 500, size: 12.5, color: color.text }), { flex: 1, height: 44, borderRadius: 10, backgroundColor: color.card, borderWidth: 1, borderColor: color.borderStrong, paddingHorizontal: 12 }]}
+                      />
+                      <Pressable onPress={askBusy ? undefined : ask} style={{ height: 44, paddingHorizontal: 16, borderRadius: 10, backgroundColor: color.cyan, alignItems: 'center', justifyContent: 'center', opacity: askBusy ? 0.7 : 1 }}>
+                        <Text style={mono({ weight: 700, size: 11, letterSpacing: 0.8, color: color.cyanOn })}>{askBusy ? '…' : 'ASK'}</Text>
+                      </Pressable>
+                    </View>
+                    {answer && (
+                      <View style={{ borderRadius: 10, backgroundColor: color.card, borderWidth: 1, borderColor: color.border, padding: 13 }}>
+                        <Text style={heading({ weight: 400, size: 12.5, lineHeight: 20, color: color.textBody })}>{answer}</Text>
+                      </View>
+                    )}
+                    {askErr && (
+                      <View style={{ borderRadius: 10, backgroundColor: color.redBg09, borderWidth: 1, borderColor: color.redBorder35, padding: 12 }}>
+                        <Text style={heading({ weight: 500, size: 11.5, lineHeight: 17, color: color.redSoft })}>{askErr}</Text>
+                      </View>
+                    )}
+                  </View>
+                ) : (
+                  <AiPlaceholder message={AI_GUIDANCE_OFF_MESSAGE} compact onConnect={() => actions.openSettings('session')} />
+                )}
+              </View>
+            )}
           </View>
         </View>
 
@@ -91,6 +149,8 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
                 title="EQUIPMENT / GAUGE PHOTO"
                 hint="Photograph the unit, wiring, board, or gauge set for your records"
                 aiMessage={AI_OFF_MESSAGE}
+                aiConfigured={aiOn}
+                onConnect={() => actions.openSettings('session')}
               />
             </View>
           )}

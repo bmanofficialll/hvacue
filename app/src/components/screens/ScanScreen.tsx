@@ -1,6 +1,6 @@
 import { color, font } from '../../theme';
 import { hasPtTable } from '../../engine/ptTables';
-import { AI_OFF_MESSAGE } from '../../engine/ai';
+import { AI_OFF_MESSAGE, analyzeNameplate, isAiConfigured } from '../../engine/ai';
 import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 import { Card, ScreenHeader } from '../ui/primitives';
@@ -28,6 +28,13 @@ export function ScanScreen({ state, actions }: { state: AppState; actions: Hvacu
           title="NAMEPLATE PHOTO"
           hint="Line up the data plate on the outdoor unit or the inside of the access panel"
           aiMessage={AI_OFF_MESSAGE}
+          aiConfigured={isAiConfigured(state.ai)}
+          onConnect={() => actions.openSettings('scan')}
+          analyzeLabel="READ NAMEPLATE WITH AI"
+          onAnalyze={async (img) => {
+            const res = await analyzeNameplate(state.ai, img);
+            actions.prefillEquipment(res.fields);
+          }}
         />
 
         <div style={{ margin: '20px 0 10px', font: `600 9.5px/1 ${font.mono}`, color: color.textDim, letterSpacing: '.16em' }}>CURRENT EQUIPMENT PROFILE</div>

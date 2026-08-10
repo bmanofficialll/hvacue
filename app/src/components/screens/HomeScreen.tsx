@@ -1,5 +1,6 @@
 import { color, font } from '../../theme';
 import { deriveSession } from '../../state/derive';
+import { isAiConfigured } from '../../engine/ai';
 import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 
@@ -15,6 +16,7 @@ const TILES: { n: string; title: string; sub: string; target: 'scan' | 'fault' |
 export function HomeScreen({ state, actions }: { state: AppState; actions: HvacueActions }) {
   const derived = state.equipmentConfirmed ? deriveSession(state) : null;
   const hasOpenSession = !!derived && derived.loggedCount > 0;
+  const aiOn = isAiConfigured(state.ai);
 
   return (
     <div style={{ flex: 1, overflow: 'auto', padding: '32px 18px 34px' }}>
@@ -37,6 +39,13 @@ export function HomeScreen({ state, actions }: { state: AppState; actions: Hvacu
           >
             TECH
           </div>
+        </div>
+        <div
+          onClick={() => actions.openSettings('home')}
+          title="Connect AI"
+          style={{ width: 34, height: 34, borderRadius: 9, background: '#15191D', border: `1px solid ${aiOn ? color.cyanBorder : 'rgba(255,255,255,.08)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', font: `700 11px/1 ${font.mono}`, color: aiOn ? color.cyan : color.textDim }}
+        >
+          AI
         </div>
       </div>
 
