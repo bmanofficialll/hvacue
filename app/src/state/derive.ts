@@ -1,5 +1,6 @@
 import { color } from '../theme';
 import { computeCauses, computeNextStep, evidenceTag, hasPtTable, selectTree } from '../engine/engine';
+import { CALCULATORS } from '../engine/calculators';
 import type { AppState } from './types';
 
 export interface ReadingRow {
@@ -86,7 +87,28 @@ export function deriveSession(state: AppState) {
     ? 'NO MANUFACTURER SELECTED — EVERY PROCEDURE BELOW IS GENERIC, NOT BRAND-SPECIFIC'
     : E.manufacturer.toUpperCase() + ' PROCEDURE WHERE DOCUMENTED · GENERIC WHERE MARKED';
 
+  // Plain-language guided walkthrough — a phase-aware "where you are / what to
+  // do now" that hand-holds the technician through the whole job.
+  const total = tree.order.length;
+  let walkthrough: { phase: string; headline: string; body: string };
+  if (state.verifyValue != null && verify) {
+    walkthrough = verify.status === 'verified'
+      ? { phase: 'DONE', headline: 'Fix verified — you can close the job.', body: 'The number that tripped the equipment is back in range at matched conditions. The report has your before/after on record.' }
+      : { phase: 'RE-CHECK', headline: 'Not verified yet — back to the data.', body: 'The verification reading is still out of range, so the root cause was not addressed. Re-open the ranked causes and work the next most-likely one.' };
+  } else if (state.repair) {
+    walkthrough = { phase: 'VERIFY', headline: 'Repair logged — now prove it.', body: 'Run the equipment at similar conditions, let it settle, and take the one verification reading HVACue asks for. A repair is not finished until that number moves back where it belongs.' };
+  } else if (loggedCount === 0) {
+    walkthrough = { phase: 'START', headline: 'Let’s work this one measurement at a time.', body: 'Tap the first field reading below and key in what you measure. Don’t worry about the whole picture yet — log one honest number and HVACue starts narrowing it down. Press “What should I check next?” any time you’re unsure.' };
+  } else if (loggedCount < total) {
+    walkthrough = { phase: 'MEASURE', headline: `${loggedCount} of ${total} readings in — keep going.`, body: 'Each reading sharpens the ranking below. Follow the “Check this next” card — it tells you what to measure, why it matters, how to take it, and what a normal vs abnormal result means.' };
+  } else if (canRepair || !state.repair) {
+    walkthrough = { phase: 'DECIDE', headline: 'Full data set — confirm the cause, then fix.', body: 'You’ve logged everything. Read the top-ranked cause and run the hands-on test in the “Next test” card before you change parts. When the test confirms it, tap “Log repair & verify.”' };
+  } else {
+    walkthrough = { phase: 'MEASURE', headline: 'Keep working the sequence.', body: 'Follow the next-step card below.' };
+  }
+
   return {
+    walkthrough,
     tree, readings, metrics, causes, loggedCount, flagText, hasFlag: flagText.length > 0,
     nextStep, derivedMetrics, canRepair, verify, hasPt,
     evidenceTag: evidenceTag(loggedCount),
@@ -107,11 +129,14 @@ export interface KeypadView {
 export function deriveKeypad(state: AppState): KeypadView | null {
   const kp = state.keypad;
   if (!kp) return null;
-  if (kp.id.indexOf('calc_') === 0) {
+  if (kp.id.indexOf('calc:') === 0) {
+    const [, calcId, inputKey] = kp.id.split(':');
+    const calc = CALCULATORS.find((c) => c.id === calcId);
+    const input = calc?.inputs.find((i) => i.key === inputKey);
     return {
-      label: kp.id === 'calc_btu' ? 'Load' : 'Design ΔT',
-      unit: kp.id === 'calc_btu' ? 'BTU/HR' : '°F',
-      hint: 'GLYCOL-CORRECTED CONSTANT IN USE',
+      label: input ? input.label : 'Value',
+      unit: input ? input.unit : '',
+      hint: calc ? calc.formula.toUpperCase() : '',
       hintColor: color.textDim,
     };
   }

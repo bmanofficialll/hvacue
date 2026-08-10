@@ -33,7 +33,7 @@ export default function App() {
     case 'scan': screen = <ScanScreen state={state} actions={actions} />; break;
     case 'calc': screen = <CalcScreen state={state} actions={actions} />; break;
     case 'history': screen = <HistoryScreen actions={actions} />; break;
-    case 'training': screen = <TrainingScreen actions={actions} />; break;
+    case 'training': screen = <TrainingScreen state={state} actions={actions} />; break;
     case 'report': screen = <ReportScreen state={state} actions={actions} />; break;
   }
 

@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { color, font } from '../../theme';
 import { deriveSession } from '../../state/derive';
+import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE } from '../../engine/ai';
 import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 import { BackButton, Card, Chip, ProgressBar, SectionLabel } from '../ui/primitives';
+import { PhotoCapture } from '../ui/PhotoCapture';
+import { AiPlaceholder } from '../ui/AiPlaceholder';
 import type { RankedCause } from '../../engine/engine';
 
 function causeColor(rank: RankedCause['rank']) {
@@ -17,6 +21,8 @@ function causeBorder(rank: RankedCause['rank']) {
 export function SessionScreen({ state, actions }: { state: AppState; actions: HvacueActions }) {
   const d = deriveSession(state);
   const { tree, causes, nextStep } = d;
+  const [showPhoto, setShowPhoto] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -39,6 +45,19 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
           {d.chips.map((c, i) => <Chip key={i} text={c.t} bg={c.bg} fg={c.fg} />)}
         </div>
 
+        {/* Guided walkthrough — plain-language "where you are / what to do now" */}
+        <div style={{ padding: '18px 18px 0' }}>
+          <div style={{ borderRadius: 12, background: color.cyanBg07, border: `1px solid ${color.cyanBorder25}`, padding: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ font: `600 9px/1 ${font.mono}`, color: color.cyan, letterSpacing: '.14em', flex: 1 }}>GUIDED WALKTHROUGH · {d.walkthrough.phase}</div>
+              <div onClick={() => setShowGuide((s) => !s)} style={{ font: `600 9px/1 ${font.mono}`, color: color.cyan, letterSpacing: '.08em', cursor: 'pointer' }}>{showGuide ? 'HIDE AI' : 'ASK AI ›'}</div>
+            </div>
+            <div style={{ font: `600 14px/1.3 ${font.heading}`, marginTop: 9 }}>{d.walkthrough.headline}</div>
+            <div style={{ font: `500 12px/1.55 ${font.heading}`, color: color.textBody, marginTop: 7 }}>{d.walkthrough.body}</div>
+            {showGuide && <div style={{ marginTop: 12 }}><AiPlaceholder message={AI_GUIDANCE_OFF_MESSAGE} compact /></div>}
+          </div>
+        </div>
+
         <div style={{ padding: '18px 18px 0' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <SectionLabel>EQUIPMENT PROFILE</SectionLabel>
@@ -53,6 +72,22 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
             ))}
           </Card>
           <div style={{ font: `500 9.5px/1.5 ${font.mono}`, color: color.textDim, marginTop: 10 }}>{d.brandNote}</div>
+
+          <div
+            onClick={() => setShowPhoto((s) => !s)}
+            style={{ marginTop: 12, height: 44, borderRadius: 11, border: `1px solid ${color.cyanBorder}`, background: color.cyanBg07, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `600 11px/1 ${font.mono}`, letterSpacing: '.08em', color: color.cyan, cursor: 'pointer' }}
+          >
+            {showPhoto ? 'HIDE PHOTO' : '＋  ADD PHOTO OF EQUIPMENT / GAUGES'}
+          </div>
+          {showPhoto && (
+            <div style={{ marginTop: 12 }}>
+              <PhotoCapture
+                title="EQUIPMENT / GAUGE PHOTO"
+                hint="Photograph the unit, wiring, board, or gauge set for your records"
+                aiMessage={AI_OFF_MESSAGE}
+              />
+            </div>
+          )}
         </div>
 
         <div style={{ padding: 18 }}>

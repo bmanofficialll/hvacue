@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { color, heading, mono } from '../../theme';
 import { deriveSession } from '../../state/derive';
+import { AI_OFF_MESSAGE, AI_GUIDANCE_OFF_MESSAGE } from '../../engine/ai';
 import type { AppState } from '../../state/types';
 import type { HvacueActions } from '../../state/useHvacueState';
 import { BackButton, Card, Chip, ProgressBar, SectionLabel } from '../ui/primitives';
+import { PhotoCapture } from '../ui/PhotoCapture';
+import { AiPlaceholder } from '../ui/AiPlaceholder';
 import type { RankedCause } from '../../engine/engine';
 
 function causeColor(rank: RankedCause['rank']) {
@@ -19,6 +23,8 @@ function causeBorder(rank: RankedCause['rank']) {
 export function SessionScreen({ state, actions }: { state: AppState; actions: HvacueActions }) {
   const d = deriveSession(state);
   const { tree, causes, nextStep } = d;
+  const [showPhoto, setShowPhoto] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   return (
     <View style={{ flex: 1 }}>
@@ -41,6 +47,21 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
           {d.chips.map((c, i) => <Chip key={i} text={c.t} bg={c.bg} fg={c.fg} />)}
         </View>
 
+        {/* Guided walkthrough — plain-language "where you are / what to do now" */}
+        <View style={{ paddingHorizontal: 18, paddingTop: 18 }}>
+          <View style={{ borderRadius: 12, backgroundColor: color.cyanBg07, borderWidth: 1, borderColor: color.cyanBorder25, padding: 14 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Text style={[mono({ weight: 600, size: 9, letterSpacing: 1.3, color: color.cyan }), { flex: 1 }]}>GUIDED WALKTHROUGH · {d.walkthrough.phase}</Text>
+              <Pressable onPress={() => setShowGuide((s) => !s)}>
+                <Text style={mono({ weight: 600, size: 9, letterSpacing: 0.8, color: color.cyan })}>{showGuide ? 'HIDE AI' : 'ASK AI ›'}</Text>
+              </Pressable>
+            </View>
+            <Text style={[heading({ weight: 600, size: 14, lineHeight: 18 }), { marginTop: 9 }]}>{d.walkthrough.headline}</Text>
+            <Text style={[heading({ weight: 500, size: 12, lineHeight: 18, color: color.textBody }), { marginTop: 7 }]}>{d.walkthrough.body}</Text>
+            {showGuide && <View style={{ marginTop: 12 }}><AiPlaceholder message={AI_GUIDANCE_OFF_MESSAGE} compact /></View>}
+          </View>
+        </View>
+
         <View style={{ padding: 18, paddingBottom: 0 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <SectionLabel>EQUIPMENT PROFILE</SectionLabel>
@@ -57,6 +78,22 @@ export function SessionScreen({ state, actions }: { state: AppState; actions: Hv
             ))}
           </Card>
           <Text style={[mono({ weight: 500, size: 9.5, lineHeight: 14, color: color.textDim }), { marginTop: 10 }]}>{d.brandNote}</Text>
+
+          <Pressable
+            onPress={() => setShowPhoto((s) => !s)}
+            style={{ marginTop: 12, height: 44, borderRadius: 11, borderWidth: 1, borderColor: color.cyanBorder, backgroundColor: color.cyanBg07, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Text style={mono({ weight: 600, size: 11, letterSpacing: 0.8, color: color.cyan })}>{showPhoto ? 'HIDE PHOTO' : '＋  ADD PHOTO OF EQUIPMENT / GAUGES'}</Text>
+          </Pressable>
+          {showPhoto && (
+            <View style={{ marginTop: 12 }}>
+              <PhotoCapture
+                title="EQUIPMENT / GAUGE PHOTO"
+                hint="Photograph the unit, wiring, board, or gauge set for your records"
+                aiMessage={AI_OFF_MESSAGE}
+              />
+            </View>
+          )}
         </View>
 
         <View style={{ padding: 18 }}>

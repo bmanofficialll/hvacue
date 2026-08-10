@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { DEFAULT_EQUIPMENT } from '../engine/equipment';
 import { selectTree } from '../engine/engine';
+import { CALCULATORS, defaultCalcValues } from '../engine/calculators';
 import type { Equipment } from '../engine/types';
 import type { AppState, Screen } from './types';
 
@@ -20,7 +21,9 @@ const initialState: AppState = {
   repair: null,
   verifyValue: null,
   voiceOpen: false,
-  calc: { btu: 480000, dt: 12 },
+  activeCalc: CALCULATORS[0].id,
+  calcValues: defaultCalcValues(),
+  trainingTopic: null,
   setupReturnScreen: 'session',
 };
 
@@ -74,7 +77,8 @@ export function useHvacueState() {
       let d = s.draft;
       if (ch === 'del') d = d.slice(0, -1);
       else if (ch === '.') { if (d.indexOf('.') < 0) d += '.'; }
-      else if (d.length < 5) d += ch;
+      else if (ch === '-') { d = d.startsWith('-') ? d.slice(1) : '-' + d; }
+      else if (d.replace('-', '').replace('.', '').length < 6) d += ch;
       return { ...s, draft: d };
     });
   }, []);
@@ -85,9 +89,15 @@ export function useHvacueState() {
       if (!kp) return s;
       const v = parseFloat(s.draft);
       if (isNaN(v)) return s;
-      if (kp.id.indexOf('calc_') === 0) {
-        const field = kp.id.slice(5) as keyof AppState['calc'];
-        return { ...s, calc: { ...s.calc, [field]: v }, keypad: null, draft: '' };
+      // Calculator input: id is "calc:<calcId>:<inputKey>"
+      if (kp.id.indexOf('calc:') === 0) {
+        const [, calcId, inputKey] = kp.id.split(':');
+        return {
+          ...s,
+          calcValues: { ...s.calcValues, [calcId]: { ...s.calcValues[calcId], [inputKey]: v } },
+          keypad: null,
+          draft: '',
+        };
       }
       if (kp.verify) {
         return { ...s, verifyValue: v, keypad: null, draft: '', screen: 'report' };
@@ -95,6 +105,11 @@ export function useHvacueState() {
       return { ...s, readings: { ...s.readings, [kp.id]: v }, keypad: null, draft: '' };
     });
   }, []);
+
+  const selectCalc = useCallback((id: string) => setState((s) => ({ ...s, activeCalc: id })), []);
+
+  const openTraining = useCallback((topic: string) => setState((s) => ({ ...s, screen: 'training', trainingTopic: topic })), []);
+  const closeTraining = useCallback(() => setState((s) => ({ ...s, trainingTopic: null })), []);
 
   const openRepair = useCallback(() => setState((s) => ({ ...s, repairOpen: true })), []);
   const closeRepair = useCallback(() => setState((s) => ({ ...s, repairOpen: false })), []);
@@ -110,9 +125,10 @@ export function useHvacueState() {
   const actions = useMemo(() => ({
     go, setMode, toggleTeach, openEquipmentSetup, confirmEquipment,
     openKeypad, closeKeypad, pressKey, commitReading,
+    selectCalc, openTraining, closeTraining,
     openRepair, closeRepair, selectRepair,
     openVoice, closeVoice, backToRanking,
-  }), [go, setMode, toggleTeach, openEquipmentSetup, confirmEquipment, openKeypad, closeKeypad, pressKey, commitReading, openRepair, closeRepair, selectRepair, openVoice, closeVoice, backToRanking]);
+  }), [go, setMode, toggleTeach, openEquipmentSetup, confirmEquipment, openKeypad, closeKeypad, pressKey, commitReading, selectCalc, openTraining, closeTraining, openRepair, closeRepair, selectRepair, openVoice, closeVoice, backToRanking]);
 
   return { state, actions };
 }

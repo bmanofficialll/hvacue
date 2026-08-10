@@ -9,7 +9,11 @@
     "backgroundColor": "#0A0C0E",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hvacue.app"
+      "bundleIdentifier": "com.hvacue.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "HVACue uses the camera to photograph equipment nameplates, controller fault codes, and gauge readings.",
+        "NSPhotoLibraryUsageDescription": "HVACue lets you attach photos of equipment and gauges to a diagnostic session."
+      }
     },
     "android": {
       "package": "com.hvacue.app",
@@ -21,6 +25,15 @@
       },
       "predictiveBackGestureEnabled": false
     },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "HVACue uses the camera to photograph equipment nameplates, controller fault codes, and gauge readings.",
+          "photosPermission": "HVACue lets you attach photos of equipment and gauges to a diagnostic session."
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     }

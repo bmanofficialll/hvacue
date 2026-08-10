@@ -7,11 +7,6 @@ export interface Keypad {
   verify: boolean;
 }
 
-export interface CalcState {
-  btu: number;
-  dt: number;
-}
-
 export interface AppState {
   screen: Screen;
   equipment: Equipment;
@@ -26,7 +21,12 @@ export interface AppState {
   repair: string | null;
   verifyValue: number | null;
   voiceOpen: boolean;
-  calc: CalcState;
+  /** Which calculator is open on the calc screen. */
+  activeCalc: string;
+  /** Per-calculator input values, keyed calcId -> inputKey -> value. */
+  calcValues: Record<string, Record<string, number>>;
+  /** Which training lesson is open (null = the skill-map index). */
+  trainingTopic: string | null;
   /** Where DIAGNOSE / RESCAN should land after equipment setup is confirmed. */
   setupReturnScreen: Screen;
 }

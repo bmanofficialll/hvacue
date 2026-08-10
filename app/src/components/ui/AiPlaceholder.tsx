@@ -1,0 +1,29 @@
+import { color, font } from '../../theme';
+
+/**
+ * Shown wherever an AI feature is wired but switched off. Honest by design:
+ * it says the feature isn't connected rather than faking a result.
+ */
+export function AiPlaceholder({ message, compact }: { message: string; compact?: boolean }) {
+  return (
+    <div
+      style={{
+        borderRadius: 12,
+        background: 'rgba(79,209,224,.06)',
+        border: `1px dashed ${color.cyanBorder}`,
+        padding: compact ? 11 : 14,
+        display: 'flex',
+        gap: 11,
+        alignItems: 'flex-start',
+      }}
+    >
+      <div style={{ width: 22, height: 22, borderRadius: 6, background: color.cyanBg1, border: `1px solid ${color.cyanBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', font: `700 11px/1 ${font.mono}`, color: color.cyan }}>
+        AI
+      </div>
+      <div style={{ flex: 1 }}>
+        <div style={{ font: `600 9.5px/1 ${font.mono}`, color: color.cyan, letterSpacing: '.14em' }}>AI · NOT CONNECTED</div>
+        <div style={{ font: `500 11px/1.5 ${font.heading}`, color: color.textMuted, marginTop: 7 }}>{message}</div>
+      </div>
+    </div>
+  );
+}
