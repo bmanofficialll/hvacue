@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#131518;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;font-family:Archivo,system-ui,sans-serif}
+a{color:#FFB020;text-decoration:none}a:hover{color:#FFC85E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+::-webkit-scrollbar{width:0}
+@keyframes hvq-scan{0%{transform:translateY(0)}100%{transform:translateY(150px)}}
+@keyframes hvq-blip{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes hvq-rise{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+</style></helmet>
+<div style="padding:36px 20px 60px;display:flex;gap:28px;align-items:flex-start">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="height:100%;display:flex;flex-direction:column;background:#0A0C0E;color:#E8EBED;position:relative;overflow:hidden;font-family:Archivo,system-ui,sans-serif">
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;overflow:auto;padding:60px 18px 34px">
+  <div style="display:flex;align-items:center;gap:11px;margin-bottom:22px">
+    <div style="width:34px;height:34px;border-radius:10px;border:2px solid #FFB020;display:flex;align-items:center;justify-content:center;font:700 16px/1 Archivo;color:#FFB020">Q</div>
+    <div style="flex:1">
+      <div style="font:700 21px/1 Archivo;letter-spacing:-.02em">HVACue</div>
+      <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.18em;margin-top:5px">DIAGNOSE. VERIFY. FIX.</div>
+    </div>
+    <div style="display:flex;padding:3px;background:#15191D;border:1px solid rgba(255,255,255,.08);border-radius:9px">
+      <div onClick="{{ setBeginner }}" style="padding:8px 10px;border-radius:6px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;background:{{ begBg }};color:{{ begFg }}">BEGIN</div>
+      <div onClick="{{ setTech }}" style="padding:8px 10px;border-radius:6px;font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;background:{{ techBg }};color:{{ techFg }}">TECH</div>
+    </div>
+  </div>
+
+  <div onClick="{{ goSession }}" style="height:104px;border-radius:14px;background:linear-gradient(180deg,#FFC04A,#FFB020);color:#171203;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;margin-bottom:11px" style-active="transform:scale(.985)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div style="font:700 25px/1 Archivo;letter-spacing:-.02em">DIAGNOSE</div>
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;opacity:.6">01</div>
+    </div>
+    <div style="font:500 11.5px/1.3 Archivo;opacity:.72">Start a guided session — symptom, measurements, ranked causes</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+    <div onClick="{{ goScan }}" style="height:92px;border-radius:13px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:13px 14px;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.12em">02</div>
+      <div><div style="font:600 14px/1.15 Archivo">Scan<br>equipment</div><div style="font:500 10px/1 Archivo;color:#7E888F;margin-top:5px">Nameplate OCR</div></div>
+    </div>
+    <div onClick="{{ goFault }}" style="height:92px;border-radius:13px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:13px 14px;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.12em">03</div>
+      <div><div style="font:600 14px/1.15 Archivo">Fault<br>code</div><div style="font:500 10px/1 Archivo;color:#7E888F;margin-top:5px">Photo or type</div></div>
+    </div>
+    <div onClick="{{ goScan }}" style="height:92px;border-radius:13px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:13px 14px;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.12em">04</div>
+      <div><div style="font:600 14px/1.15 Archivo">Photo<br>diagnosis</div><div style="font:500 10px/1 Archivo;color:#7E888F;margin-top:5px">Board, wiring, gauges</div></div>
+    </div>
+    <div onClick="{{ goCalc }}" style="height:92px;border-radius:13px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:13px 14px;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.12em">05</div>
+      <div><div style="font:600 14px/1.15 Archivo">Calculators</div><div style="font:500 10px/1 Archivo;color:#7E888F;margin-top:5px">42 tools</div></div>
+    </div>
+    <div onClick="{{ goHistory }}" style="height:92px;border-radius:13px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:13px 14px;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.12em">06</div>
+      <div><div style="font:600 14px/1.15 Archivo">My jobs</div><div style="font:500 10px/1 Archivo;color:#7E888F;margin-top:5px">Buildings &amp; history</div></div>
+    </div>
+    <div onClick="{{ goTraining }}" style="height:92px;border-radius:13px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:13px 14px;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.12em">07</div>
+      <div><div style="font:600 14px/1.15 Archivo">Training</div><div style="font:500 10px/1 Archivo;color:#7E888F;margin-top:5px">9 levels · skill map</div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:11px;border-radius:13px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:13px 14px;display:flex;align-items:center;gap:12px">
+    <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.12em">08</div>
+    <div style="font:600 13px/1 Archivo;flex:1">References &amp; manual library</div>
+    <div style="font:500 10px/1 'IBM Plex Mono',monospace;color:#7E888F">142 DOCS</div>
+  </div>
+
+  <div style="margin-top:22px;font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em;margin-bottom:9px">OPEN SESSION</div>
+  <div onClick="{{ goSession }}" style="border-radius:13px;background:#12171B;border:1px solid rgba(255,176,32,.32);padding:14px;display:flex;gap:12px;align-items:center">
+    <div style="width:6px;height:38px;border-radius:3px;background:#FFB020"></div>
+    <div style="flex:1">
+      <div style="font:500 10px/1 'IBM Plex Mono',monospace;color:#FFB020;letter-spacing:.1em">JOB #10482 · IN PROGRESS</div>
+      <div style="font:600 14px/1.2 Archivo;margin-top:6px">30HXC water-cooled chiller</div>
+      <div style="font:500 11px/1 Archivo;color:#7E888F;margin-top:4px">High discharge pressure trip · Bay Tower</div>
+    </div>
+    <div style="font:600 12px/1 Archivo;color:#7E888F">›</div>
+  </div>
+
+  <div onClick="{{ openVoice }}" style="margin-top:20px;height:52px;border-radius:26px;border:1px solid rgba(79,209,224,.4);background:rgba(79,209,224,.07);display:flex;align-items:center;justify-content:center;gap:10px">
+    <div style="width:9px;height:9px;border-radius:5px;background:#4FD1E0;animation:hvq-blip 1.6s infinite"></div>
+    <div style="font:600 12px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.14em">VOICE MODE — HANDS FREE</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSession }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto;padding:56px 0 96px">
+  <div style="padding:8px 18px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:12px">
+    <div onClick="{{ goHome }}" style="width:34px;height:34px;border-radius:9px;background:#15191D;border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font:600 15px/1 Archivo;color:#B9C1C6">‹</div>
+    <div style="flex:1">
+      <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#FFB020;letter-spacing:.12em">JOB #10482 · SESSION LIVE</div>
+      <div style="font:600 15px/1.1 Archivo;margin-top:5px">{{ unitTitle }}</div>
+    </div>
+    <div onClick="{{ openVoice }}" style="width:34px;height:34px;border-radius:9px;background:rgba(79,209,224,.1);border:1px solid rgba(79,209,224,.35);display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;border-radius:4px;background:#4FD1E0"></div></div>
+  </div>
+
+  <div style="padding:12px 18px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.07)">
+    <sc-for list="{{ chips }}" as="c" hint-placeholder-count="6">
+      <div style="padding:5px 8px;border-radius:6px;background:{{ c.bg }};font:500 9.5px/1 'IBM Plex Mono',monospace;color:{{ c.fg }}">{{ c.t }}</div>
+    </sc-for>
+  </div>
+
+  <div style="padding:18px 18px 0">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em">EQUIPMENT PROFILE</div>
+      <div onClick="{{ goScan }}" style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.08em">RESCAN ›</div>
+    </div>
+    <div style="border-radius:12px;border:1px solid rgba(255,255,255,.08);overflow:hidden">
+      <sc-for list="{{ equipRows }}" as="e" hint-placeholder-count="8">
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div style="flex:1;font:500 10px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.08em">{{ e.k }}</div>
+          <div style="font:600 12px/1 'IBM Plex Mono',monospace;color:{{ e.color }};text-align:right">{{ e.v }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:500 9.5px/1.5 'IBM Plex Mono',monospace;color:#7E888F;margin-top:10px;text-wrap:pretty">{{ brandNote }}</div>
+  </div>
+
+  <div style="padding:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em">FIELD READINGS</div>
+      <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F">{{ readCount }} LOGGED</div>
+    </div>
+    <div style="border-radius:12px;border:1px solid rgba(255,255,255,.08);overflow:hidden">
+      <sc-for list="{{ readingRows }}" as="r" hint-placeholder-count="5">
+        <div onClick="{{ r.onEdit }}" style="display:flex;align-items:center;gap:10px;padding:13px 13px;border-bottom:1px solid rgba(255,255,255,.06);background:{{ r.bg }}">
+          <div style="flex:1">
+            <div style="font:500 11.5px/1.2 Archivo;color:#B9C1C6">{{ r.label }}</div>
+            <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:{{ r.noteColor }};margin-top:5px">{{ r.note }}</div>
+          </div>
+          <div style="font:600 17px/1 'IBM Plex Mono',monospace;color:{{ r.valColor }};text-align:right">{{ r.display }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ hasDerived }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:14px;border-radius:12px;background:#12171B;border:1px solid rgba(255,255,255,.08);padding:14px">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em;margin-bottom:12px">DERIVED — ANALYZED TOGETHER</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <sc-for list="{{ derived }}" as="d" hint-placeholder-count="3">
+          <div>
+            <div style="font:600 19px/1 'IBM Plex Mono',monospace;color:{{ d.color }}">{{ d.value }}</div>
+            <div style="font:500 9.5px/1.3 Archivo;color:#7E888F;margin-top:6px">{{ d.label }}</div>
+            <div style="font:500 8.5px/1 'IBM Plex Mono',monospace;color:#5F696F;margin-top:4px">{{ d.tag }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ hasFlag }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:14px;border-radius:12px;background:rgba(255,90,71,.09);border:1px solid rgba(255,90,71,.35);padding:14px">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#FF8A7A;letter-spacing:.14em">DATA CHECK</div>
+      <div style="font:500 12px/1.45 Archivo;color:#FFC2B8;margin-top:8px;text-wrap:pretty">{{ flagText }}</div>
+    </div>
+    </sc-if>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em">PROBABLE CAUSES</div>
+      <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#5F696F">{{ evidenceTag }}</div>
+    </div>
+
+    <sc-if value="{{ noData }}" hint-placeholder-val="{{ true }}">
+    <div style="border-radius:12px;background:#12171B;border:1px dashed rgba(255,255,255,.16);padding:16px">
+      <div style="font:600 13px/1.3 Archivo;color:#E8EBED">Insufficient information to rank causes.</div>
+      <div style="font:500 11.5px/1.5 Archivo;color:#8B959C;margin-top:8px;text-wrap:pretty">I will not guess a confidence number. Log condenser-water temperatures, flow and discharge pressure and I will rank from your data.</div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ hasCauses }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <sc-for list="{{ causes }}" as="c" hint-placeholder-count="4">
+        <div style="border-radius:12px;background:#15191D;border:1px solid {{ c.border }};padding:13px 14px">
+          <div style="display:flex;align-items:baseline;gap:9px">
+            <div style="font:600 8.5px/1 'IBM Plex Mono',monospace;color:{{ c.color }};letter-spacing:.12em;flex:1">{{ c.tier }}</div>
+            <div style="font:600 16px/1 'IBM Plex Mono',monospace;color:{{ c.color }}">{{ c.pctText }}</div>
+          </div>
+          <div style="font:600 13.5px/1.25 Archivo;margin-top:7px">{{ c.name }}</div>
+          <div style="height:4px;border-radius:2px;background:rgba(255,255,255,.07);margin-top:10px;overflow:hidden">
+            <div style="height:4px;border-radius:2px;background:{{ c.color }};width:{{ c.barWidth }}"></div>
+          </div>
+          <div style="font:500 11px/1.5 Archivo;color:#8B959C;margin-top:9px;text-wrap:pretty">{{ c.why }}</div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+
+    <div style="margin:22px 0 10px;font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em">{{ nextHeading }}</div>
+    <div style="border-radius:12px;background:#12171B;border:1px solid rgba(255,176,32,.3);overflow:hidden">
+      <div style="padding:15px;border-bottom:1px solid rgba(255,255,255,.07)">
+        <div style="font:600 15px/1.25 Archivo;color:#FFB020;text-wrap:pretty">{{ nextTitle }}</div>
+        <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;margin-top:8px">{{ nextTag }}</div>
+      </div>
+      <sc-for list="{{ nextRows }}" as="n" hint-placeholder-count="4">
+        <div style="padding:13px 15px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:12px">
+          <div style="width:74px;flex:none;font:600 8.5px/1.4 'IBM Plex Mono',monospace;color:{{ n.color }};letter-spacing:.1em">{{ n.k }}</div>
+          <div style="flex:1;font:500 11.5px/1.5 Archivo;color:#CDD4D8;text-wrap:pretty">{{ n.v }}</div>
+        </div>
+      </sc-for>
+      <div style="padding:13px 15px;display:flex;gap:9px">
+        <div onClick="{{ nextAction }}" style="flex:1;height:46px;border-radius:10px;background:#FFB020;color:#171203;display:flex;align-items:center;justify-content:center;font:700 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em">{{ nextActionLabel }}</div>
+        <div onClick="{{ toggleTeach }}" style="height:46px;padding:0 15px;border-radius:10px;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font:600 11px/1 'IBM Plex Mono',monospace;color:#B9C1C6;letter-spacing:.08em">{{ teachLabel }}</div>
+      </div>
+      <sc-if value="{{ teach }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:0 15px 15px">
+        <div style="border-radius:10px;background:rgba(79,209,224,.07);border:1px solid rgba(79,209,224,.25);padding:13px">
+          <div style="font:600 9px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.14em">TEACH ME</div>
+          <div style="font:500 12px/1.55 Archivo;color:#CDD4D8;margin-top:9px;text-wrap:pretty">{{ teachText }}</div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ canRepair }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ openRepair }}" style="margin-top:12px;height:50px;border-radius:12px;border:1px solid rgba(74,222,154,.4);background:rgba(74,222,154,.08);display:flex;align-items:center;justify-content:center;font:600 11.5px/1 'IBM Plex Mono',monospace;color:#4ADE9A;letter-spacing:.1em">LOG REPAIR &amp; VERIFY</div>
+    </sc-if>
+
+    <div style="margin-top:16px;font:500 10px/1.6 'IBM Plex Mono',monospace;color:#4F585E;text-wrap:pretty">SOURCES · MFR SPEC: 30HXC IOM p.42 · GUIDELINE: ASHRAE cond. approach · INFERRED: HVACue engine · MEASURED: this session</div>
+  </div>
+</div>
+
+<div style="position:absolute;left:0;right:0;bottom:0;padding:10px 18px 30px;background:linear-gradient(180deg,rgba(10,12,14,0),#0A0C0E 34%);z-index:20">
+  <div onClick="{{ nextAction }}" style="height:54px;border-radius:14px;background:#1B2126;border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;gap:10px">
+    <div style="font:700 12px/1 'IBM Plex Mono',monospace;color:#E8EBED;letter-spacing:.1em">WHAT SHOULD I CHECK NEXT?</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFault }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto;padding:56px 0 40px">
+  <div style="padding:8px 18px 14px;display:flex;align-items:center;gap:12px">
+    <div onClick="{{ goHome }}" style="width:34px;height:34px;border-radius:9px;background:#15191D;border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font:600 15px/1 Archivo;color:#B9C1C6">‹</div>
+    <div style="font:600 15px/1 Archivo;flex:1">Fault code scanner</div>
+  </div>
+  <div style="margin:0 18px;height:196px;border-radius:14px;background:#0E1215;border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden">
+    <div style="position:absolute;inset:34px 44px;border:1.5px solid rgba(79,209,224,.55);border-radius:8px"></div>
+    <div style="position:absolute;left:44px;right:44px;top:34px;height:2px;background:#4FD1E0;box-shadow:0 0 12px #4FD1E0;animation:hvq-scan 2.4s ease-in-out infinite alternate"></div>
+    <div style="position:absolute;left:0;right:0;top:82px;text-align:center;font:600 26px/1 'IBM Plex Mono',monospace;color:#FF8A7A">P.05</div>
+    <div style="position:absolute;left:0;right:0;bottom:14px;text-align:center;font:500 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.14em">HOLD OVER CONTROLLER DISPLAY</div>
+  </div>
+  <div style="padding:18px">
+    <div style="border-radius:12px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:15px">
+      <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.12em">READ · CONFIDENCE HIGH</div>
+      <div style="font:600 17px/1.2 Archivo;margin-top:9px">High discharge pressure trip</div>
+      <div style="font:500 11.5px/1.5 Archivo;color:#8B959C;margin-top:8px;text-wrap:pretty">Code matched to the controller family on this nameplate. Meaning taken from manufacturer literature — not inferred.</div>
+      <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+        <div style="padding:5px 8px;border-radius:6px;background:rgba(255,176,32,.12);font:600 9px/1 'IBM Plex Mono',monospace;color:#FFB020;letter-spacing:.1em">MFR SPEC</div>
+        <div style="padding:5px 8px;border-radius:6px;background:#1B2126;font:600 9px/1 'IBM Plex Mono',monospace;color:#B9C1C6;letter-spacing:.1em">IOM p.42</div>
+      </div>
+    </div>
+    <div style="margin:18px 0 10px;font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em">DIAGNOSTIC SEQUENCE</div>
+    <div style="border-radius:12px;border:1px solid rgba(255,255,255,.08);overflow:hidden">
+      <sc-for list="{{ faultSeq }}" as="s" hint-placeholder-count="6">
+        <div style="display:flex;gap:12px;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div style="font:600 11px/1.3 'IBM Plex Mono',monospace;color:#5F696F;width:20px;flex:none">{{ s.n }}</div>
+          <div style="flex:1;font:500 12px/1.45 Archivo;color:#CDD4D8;text-wrap:pretty">{{ s.t }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div onClick="{{ goSession }}" style="margin-top:16px;height:52px;border-radius:12px;background:#FFB020;color:#171203;display:flex;align-items:center;justify-content:center;font:700 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em">START GUIDED SESSION</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isScan }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto;padding:56px 0 40px">
+  <div style="padding:8px 18px 14px;display:flex;align-items:center;gap:12px">
+    <div onClick="{{ goHome }}" style="width:34px;height:34px;border-radius:9px;background:#15191D;border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font:600 15px/1 Archivo;color:#B9C1C6">‹</div>
+    <div style="font:600 15px/1 Archivo;flex:1">Equipment identified</div>
+  </div>
+  <div style="margin:0 18px 18px;height:150px;border-radius:14px;background:repeating-linear-gradient(135deg,#12161A 0 9px,#161B20 9px 18px);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px">
+    <div style="font:500 10px/1 'IBM Plex Mono',monospace;color:#6D767C;letter-spacing:.14em">NAMEPLATE PHOTO</div>
+    <div style="font:500 10px/1 'IBM Plex Mono',monospace;color:#4F585E">drop image here</div>
+  </div>
+  <div style="padding:0 18px">
+    <div style="font:500 12px/1.5 Archivo;color:#8B959C;margin-bottom:12px">I identified this equipment as…</div>
+    <div style="border-radius:12px;border:1px solid rgba(255,255,255,.08);overflow:hidden">
+      <sc-for list="{{ nameplate }}" as="p" hint-placeholder-count="8">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div style="flex:1;font:500 11px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.08em">{{ p.k }}</div>
+          <div style="font:600 13px/1 'IBM Plex Mono',monospace;color:{{ p.color }}">{{ p.v }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:500 10.5px/1.5 'IBM Plex Mono',monospace;color:#FF8A7A;margin-top:12px;text-wrap:pretty">2 FIELDS LOW-CONFIDENCE — TAP TO CORRECT BEFORE I USE THEM</div>
+    <div onClick="{{ goSession }}" style="margin-top:16px;height:52px;border-radius:12px;background:#FFB020;color:#171203;display:flex;align-items:center;justify-content:center;font:700 12px/1 'IBM Plex Mono',monospace;letter-spacing:.1em">CONFIRM &amp; DIAGNOSE</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCalc }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto;padding:56px 0 40px">
+  <div style="padding:8px 18px 14px;display:flex;align-items:center;gap:12px">
+    <div onClick="{{ goHome }}" style="width:34px;height:34px;border-radius:9px;background:#15191D;border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font:600 15px/1 Archivo;color:#B9C1C6">‹</div>
+    <div style="font:600 15px/1 Archivo;flex:1">Hydronic flow</div>
+  </div>
+  <div style="padding:0 18px">
+    <div style="border-radius:14px;background:#12171B;border:1px solid rgba(255,255,255,.08);padding:18px;text-align:center">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em">GPM = BTU/HR ÷ (500 × ΔT)</div>
+      <div style="font:600 46px/1 'IBM Plex Mono',monospace;color:#FFB020;margin-top:16px">{{ calcGpm }}</div>
+      <div style="font:500 11px/1 'IBM Plex Mono',monospace;color:#7E888F;margin-top:9px;letter-spacing:.14em">GALLONS PER MINUTE</div>
+    </div>
+    <div style="margin-top:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);overflow:hidden">
+      <sc-for list="{{ calcFields }}" as="f" hint-placeholder-count="3">
+        <div onClick="{{ f.onEdit }}" style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div style="flex:1;font:500 12px/1.2 Archivo;color:#B9C1C6">{{ f.label }}</div>
+          <div style="font:600 16px/1 'IBM Plex Mono',monospace;color:#E8EBED">{{ f.value }}</div>
+          <div style="font:500 10px/1 'IBM Plex Mono',monospace;color:#7E888F;width:36px;text-align:right">{{ f.unit }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:500 10.5px/1.6 'IBM Plex Mono',monospace;color:#4F585E;margin-top:12px;text-wrap:pretty">FLUID: 30% PROPYLENE GLYCOL — 500 CONSTANT REPLACED WITH FLUID-CORRECTED VALUE. WATER MODE AVAILABLE.</div>
+    <div style="margin:22px 0 10px;font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em">OTHER CALCULATORS</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <sc-for list="{{ calcList }}" as="c" hint-placeholder-count="6">
+        <div style="height:58px;border-radius:11px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:11px 12px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font:600 12px/1.1 Archivo">{{ c.n }}</div>
+          <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F">{{ c.s }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto;padding:56px 0 40px">
+  <div style="padding:8px 18px 14px;display:flex;align-items:center;gap:12px">
+    <div onClick="{{ goHome }}" style="width:34px;height:34px;border-radius:9px;background:#15191D;border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font:600 15px/1 Archivo;color:#B9C1C6">‹</div>
+    <div style="font:600 15px/1 Archivo;flex:1">Bay Tower</div>
+  </div>
+  <div style="padding:0 18px">
+    <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em;margin-bottom:10px">PLANT TREE</div>
+    <div style="border-radius:12px;border:1px solid rgba(255,255,255,.08);overflow:hidden">
+      <sc-for list="{{ plant }}" as="e" hint-placeholder-count="7">
+        <div style="display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06);padding-left:{{ e.indent }}">
+          <div style="width:7px;height:7px;border-radius:4px;background:{{ e.dot }};flex:none"></div>
+          <div style="flex:1;font:500 12.5px/1.2 Archivo;color:{{ e.color }}">{{ e.n }}</div>
+          <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F">{{ e.s }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin:20px 0 10px;font:600 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.16em">CH-1 SERVICE HISTORY</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <sc-for list="{{ history }}" as="h" hint-placeholder-count="3">
+        <div style="border-radius:12px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:13px 14px">
+          <div style="display:flex;justify-content:space-between">
+            <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:#7E888F">{{ h.d }}</div>
+            <div style="font:500 9.5px/1 'IBM Plex Mono',monospace;color:{{ h.color }}">{{ h.tag }}</div>
+          </div>
+          <div style="font:600 13px/1.25 Archivo;margin-top:8px">{{ h.t }}</div>
+          <div style="font:500 11px/1.5 Archivo;color:#8B959C;margin-top:6px;text-wrap:pretty">{{ h.b }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:14px;border-radius:12px;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);padding:14px">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#FFB020;letter-spacing:.14em">RECURRENCE DETECTED</div>
+      <div style="font:500 12px/1.5 Archivo;color:#E0C79A;margin-top:8px;text-wrap:pretty">Third high-discharge event in 14 months, each cleared by cleaning. Condenser approach is trending up between cleanings — look upstream at condenser-water treatment, not the chiller.</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTraining }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto;padding:56px 0 40px">
+  <div style="padding:8px 18px 14px;display:flex;align-items:center;gap:12px">
+    <div onClick="{{ goHome }}" style="width:34px;height:34px;border-radius:9px;background:#15191D;border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font:600 15px/1 Archivo;color:#B9C1C6">‹</div>
+    <div style="font:600 15px/1 Archivo;flex:1">Skill map</div>
+  </div>
+  <div style="padding:0 18px">
+    <div style="border-radius:12px;background:#12171B;border:1px solid rgba(255,255,255,.08);padding:16px">
+      <sc-for list="{{ skills }}" as="s" hint-placeholder-count="6">
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font:500 12px/1 Archivo;color:#CDD4D8">{{ s.n }}</div>
+            <div style="font:600 12px/1 'IBM Plex Mono',monospace;color:{{ s.color }}">{{ s.p }}</div>
+          </div>
+          <div style="height:5px;border-radius:3px;background:rgba(255,255,255,.07);margin-top:8px;overflow:hidden">
+            <div style="height:5px;border-radius:3px;background:{{ s.color }};width:{{ s.p }}"></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:14px;border-radius:12px;background:#15191D;border:1px solid rgba(255,255,255,.08);padding:15px">
+      <div style="font:600 14px/1.2 Archivo">Weakest area: VRF</div>
+      <div style="font:500 11.5px/1.5 Archivo;color:#8B959C;margin-top:8px;text-wrap:pretty">Level 7 covers branch controllers, addressing and EEV faults — and manufacturer procedures are not interchangeable here.</div>
+      <div style="margin-top:14px;height:48px;border-radius:11px;background:#4FD1E0;color:#08181B;display:flex;align-items:center;justify-content:center;font:700 11.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em">GIVE ME A SERVICE CALL</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isReport }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto;padding:56px 0 40px">
+  <div style="padding:8px 18px 14px;display:flex;align-items:center;gap:12px">
+    <div onClick="{{ goSession }}" style="width:34px;height:34px;border-radius:9px;background:#15191D;border:1px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font:600 15px/1 Archivo;color:#B9C1C6">‹</div>
+    <div style="font:600 15px/1 Archivo;flex:1">Service report</div>
+  </div>
+  <div style="padding:0 18px">
+    <div style="border-radius:12px;background:{{ verifyBg }};border:1px solid {{ verifyBorder }};padding:15px">
+      <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:{{ verifyColor }};letter-spacing:.14em">{{ verifyTag }}</div>
+      <div style="font:600 15px/1.3 Archivo;margin-top:9px;text-wrap:pretty">{{ verifyLine }}</div>
+      <sc-if value="{{ verifyFailed }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ backToRanking }}" style="margin-top:13px;height:44px;border-radius:10px;border:1px solid rgba(255,90,71,.5);display:flex;align-items:center;justify-content:center;font:600 11px/1 'IBM Plex Mono',monospace;color:#FF8A7A;letter-spacing:.1em">BACK TO RANKED CAUSES</div>
+      </sc-if>
+    </div>
+    <div style="margin-top:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);overflow:hidden">
+      <sc-for list="{{ report }}" as="r" hint-placeholder-count="8">
+        <div style="padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div style="font:600 9px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.14em">{{ r.k }}</div>
+          <div style="font:500 12.5px/1.5 Archivo;color:#CDD4D8;margin-top:7px;text-wrap:pretty">{{ r.v }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:9px;margin-top:16px">
+      <div style="flex:1;height:50px;border-radius:11px;background:#FFB020;color:#171203;display:flex;align-items:center;justify-content:center;font:700 11.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em">EXPORT PDF</div>
+      <div style="width:88px;height:50px;border-radius:11px;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font:600 11px/1 'IBM Plex Mono',monospace;color:#B9C1C6">EMAIL</div>
+    </div>
+    <div onClick="{{ goHome }}" style="margin-top:10px;height:46px;display:flex;align-items:center;justify-content:center;font:600 11px/1 'IBM Plex Mono',monospace;color:#7E888F;letter-spacing:.1em">CLOSE JOB #10482</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ keypadOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(4,6,7,.72);z-index:40;display:flex;flex-direction:column;justify-content:flex-end">
+  <div onClick="{{ closeKeypad }}" style="flex:1"></div>
+  <div style="background:#111518;border-top:1px solid rgba(255,255,255,.1);border-radius:20px 20px 0 0;padding:18px 16px 34px;animation:hvq-rise .18s ease-out">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div style="flex:1">
+        <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#FFB020;letter-spacing:.14em">LOG MEASUREMENT</div>
+        <div style="font:600 15px/1.25 Archivo;margin-top:8px">{{ kpLabel }}</div>
+      </div>
+      <div onClick="{{ closeKeypad }}" style="width:34px;height:34px;border-radius:9px;background:#1B2126;display:flex;align-items:center;justify-content:center;font:600 13px/1 Archivo;color:#B9C1C6">✕</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;justify-content:center;gap:8px;margin:18px 0 6px">
+      <div style="font:600 52px/1 'IBM Plex Mono',monospace;color:#E8EBED">{{ kpDraft }}</div>
+      <div style="font:600 15px/1 'IBM Plex Mono',monospace;color:#7E888F;padding-bottom:6px">{{ kpUnit }}</div>
+    </div>
+    <div style="text-align:center;font:500 10.5px/1.5 'IBM Plex Mono',monospace;color:{{ kpHintColor }};min-height:32px;padding:0 10px;text-wrap:pretty">{{ kpHint }}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+      <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+        <div onClick="{{ k.press }}" style="height:54px;border-radius:11px;background:{{ k.bg }};border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font:600 21px/1 'IBM Plex Mono',monospace;color:{{ k.fg }}">{{ k.label }}</div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:9px;margin-top:10px">
+      <div onClick="{{ voiceEntry }}" style="width:60px;height:52px;border-radius:12px;border:1px solid rgba(79,209,224,.35);background:rgba(79,209,224,.08);display:flex;align-items:center;justify-content:center"><div style="width:9px;height:9px;border-radius:5px;background:#4FD1E0"></div></div>
+      <div onClick="{{ commitKeypad }}" style="flex:1;height:52px;border-radius:12px;background:#FFB020;color:#171203;display:flex;align-items:center;justify-content:center;font:700 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em">SAVE READING</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ repairOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(4,6,7,.72);z-index:45;display:flex;flex-direction:column;justify-content:flex-end">
+  <div onClick="{{ closeRepair }}" style="flex:1"></div>
+  <div style="background:#111518;border-top:1px solid rgba(255,255,255,.1);border-radius:20px 20px 0 0;padding:18px 16px 34px;animation:hvq-rise .18s ease-out">
+    <div style="font:600 9.5px/1 'IBM Plex Mono',monospace;color:#4ADE9A;letter-spacing:.14em">WHAT WAS REPAIRED?</div>
+    <div style="font:500 11.5px/1.5 Archivo;color:#8B959C;margin-top:9px;text-wrap:pretty">I will request the final readings that must change if this was the true root cause.</div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-top:14px">
+      <sc-for list="{{ repairOptions }}" as="o" hint-placeholder-count="4">
+        <div onClick="{{ o.press }}" style="padding:15px 14px;border-radius:12px;background:#15191D;border:1px solid rgba(255,255,255,.09);font:600 13px/1.3 Archivo;color:#E8EBED">{{ o.n }}</div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ voiceOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:#07090A;z-index:50;display:flex;flex-direction:column;padding:70px 18px 40px">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="width:10px;height:10px;border-radius:5px;background:#4FD1E0;animation:hvq-blip 1.4s infinite"></div>
+    <div style="font:600 10px/1 'IBM Plex Mono',monospace;color:#4FD1E0;letter-spacing:.16em;flex:1">VOICE MODE · LISTENING</div>
+    <div onClick="{{ closeVoice }}" style="width:34px;height:34px;border-radius:9px;background:#1B2126;display:flex;align-items:center;justify-content:center;font:600 13px/1 Archivo;color:#B9C1C6">✕</div>
+  </div>
+  <div style="flex:1;overflow:auto;margin-top:22px;display:flex;flex-direction:column;gap:14px">
+    <sc-for list="{{ voiceLines }}" as="v" hint-placeholder-count="5">
+      <div style="align-self:{{ v.align }};max-width:84%;padding:13px 14px;border-radius:14px;background:{{ v.bg }};border:1px solid {{ v.border }}">
+        <div style="font:600 8.5px/1 'IBM Plex Mono',monospace;color:{{ v.who }};letter-spacing:.14em">{{ v.role }}</div>
+        <div style="font:500 13px/1.5 Archivo;color:#DDE3E7;margin-top:8px;text-wrap:pretty">{{ v.t }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+    <div style="padding:11px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.14);font:500 11px/1 'IBM Plex Mono',monospace;color:#B9C1C6">"REPEAT THAT"</div>
+    <div style="padding:11px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.14);font:500 11px/1 'IBM Plex Mono',monospace;color:#B9C1C6">"WHY?"</div>
+    <div style="padding:11px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.14);font:500 11px/1 'IBM Plex Mono',monospace;color:#B9C1C6">"NEXT STEP"</div>
+    <div style="padding:11px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.14);font:500 11px/1 'IBM Plex Mono',monospace;color:#B9C1C6">"SAVE THIS READING"</div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+
+<div style="width:300px;padding-top:14px;color:#8A9298;font:400 12.5px/1.65 Archivo">
+<div style="font:600 11px/1 'IBM Plex Mono',monospace;color:#FFB020;letter-spacing:.14em">HVACue · PROTOTYPE 1a</div>
+<p style="margin:14px 0 0;text-wrap:pretty">Live diagnostic engine, not a chat mock. Tap <b style="color:#CDD4D8">DIAGNOSE</b>, then keep pressing <b style="color:#CDD4D8">WHAT SHOULD I CHECK NEXT?</b> — each reading you key in re-ranks the causes from the actual numbers (condenser ΔT, R‑134a saturation, approach), flags impossible data, and refuses to show confidence until it has evidence.</p>
+<p style="margin:12px 0 0;text-wrap:pretty">Try a bad reading (leaving water colder than entering, or 300 PSIG) to see the data check fire. BEGIN/TECH changes reasoning depth; TEACH ME expands the beginner explanation.</p>
+<p style="margin:12px 0 0;color:#5F696F;text-wrap:pretty">Scenario values are illustrative for the walkthrough — real specs would come from the manufacturer document layer.</p>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:960},&quot;manufacturer&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Carrier&quot;,&quot;Trane&quot;,&quot;York&quot;,&quot;Daikin&quot;,&quot;Mitsubishi&quot;,&quot;Lennox&quot;,&quot;Goodman&quot;,&quot;Rheem&quot;,&quot;LG&quot;,&quot;Generic / unknown&quot;],&quot;default&quot;:&quot;Goodman&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Equipment&quot;},&quot;model&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;30HXC-186&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Equipment&quot;},&quot;serial&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Equipment&quot;},&quot;equipmentType&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Water-cooled chiller&quot;,&quot;Air-cooled chiller&quot;,&quot;Rooftop unit&quot;,&quot;Split system&quot;,&quot;Heat pump&quot;,&quot;Walk-in refrigeration&quot;,&quot;VRF outdoor unit&quot;,&quot;Condensing boiler&quot;],&quot;default&quot;:&quot;Split system&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Equipment&quot;},&quot;capacityTons&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:186,&quot;min&quot;:1,&quot;max&quot;:2000,&quot;unit&quot;:&quot;tons&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Equipment&quot;},&quot;refrigerant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;R-134a&quot;,&quot;R-410A&quot;,&quot;R-404A&quot;,&quot;R-22&quot;,&quot;R-454B&quot;,&quot;R-32&quot;,&quot;R-448A&quot;,&quot;R-290&quot;],&quot;default&quot;:&quot;R-454B&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Refrigerant circuit&quot;},&quot;meteringDevice&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;EEV&quot;,&quot;TXV&quot;,&quot;Fixed orifice&quot;,&quot;Capillary&quot;,&quot;Float&quot;],&quot;default&quot;:&quot;TXV&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Refrigerant circuit&quot;},&quot;compressor&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Scroll&quot;,&quot;Screw&quot;,&quot;Reciprocating&quot;,&quot;Centrifugal&quot;,&quot;Rotary&quot;],&quot;default&quot;:&quot;Scroll&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Refrigerant circuit&quot;},&quot;circuits&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:1,&quot;max&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Refrigerant circuit&quot;},&quot;voltage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;120 V&quot;,&quot;208 V&quot;,&quot;230 V&quot;,&quot;240 V&quot;,&quot;277 V&quot;,&quot;460 V&quot;,&quot;480 V&quot;],&quot;default&quot;:&quot;230 V&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Electrical&quot;},&quot;phase&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;1Ø&quot;,&quot;3Ø&quot;],&quot;default&quot;:&quot;1Ø&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Electrical&quot;}}">
+class Component extends DCLogic {
+  state = {
+    screen: 'home', mode: 'beginner', teach: false,
+    readings: {}, flags: {},
+    keypad: null, draft: '',
+    repairOpen: false, repair: null, verifyDp: null,
+    voiceOpen: false,
+    calc: { btu: 480000, dt: 12 },
+  };
+
+  defs = {
+    ecwt: { label: 'Entering condenser water', unit: '°F', lo: 35, hi: 105,
+      expected: 'Tower water is typically 65–85 °F depending on wet-bulb.',
+      why: { b: 'Everything on the condenser side is judged against the water coming in. Without it, a high pressure reading means nothing.', t: 'Baseline for approach and tower performance.' },
+      how: 'Read the controller ECW sensor, then confirm with a clamp probe on the entering pipe.',
+      teach: 'The chiller rejects heat into this water. If the water arriving is already hot, the refrigerant has to condense at a higher temperature — and pressure follows temperature. So we start here before touching the refrigerant circuit.' },
+    lcwt: { label: 'Leaving condenser water', unit: '°F', lo: 35, hi: 125,
+      expected: '8–12 °F above entering at design flow and full load.',
+      why: { b: 'Entering and leaving together give condenser ΔT, which tells us whether water is moving through the barrel.', t: 'ΔT separates a flow problem from a heat-transfer problem.' },
+      how: 'Same sensor pair, leaving side. Take both within a minute of each other at steady load.',
+      teach: 'Water carries heat away. If only a little water flows, each gallon picks up more heat and ΔT climbs. If plenty of water flows but pressure is still high, the heat is not getting into the water at all — that is fouling or non-condensables.' },
+    gpm: { label: 'Condenser water flow', unit: 'GPM', lo: 0, hi: 2500,
+      expected: 'Design for this machine is about 1200 GPM.',
+      why: { b: 'ΔT is only a clue. Actual flow confirms it, so we do not clean clean tubes.', t: 'Confirms the ΔT inference before committing to a cause.' },
+      how: 'Read the plant flow meter, or take pump differential pressure and read GPM off the pump curve.',
+      teach: 'A high ΔT can come from low flow or from high load. Measuring flow removes the ambiguity — this is the "test before you replace" step.' },
+    dp: { label: 'Discharge pressure', unit: 'PSIG', lo: 40, hi: 320,
+      expected: 'Compared against saturation for the refrigerant on the nameplate, not a memorized number.',
+      why: { b: 'Converted to saturation temperature, this gives condensing temperature — the number that actually matters.', t: 'Condensing temp vs LCWT = approach.' },
+      how: 'Read the controller transducer. Verify against a calibrated gauge on the discharge service port before trusting it.',
+      teach: 'Pressure by itself is not a diagnosis. Convert it to the temperature the refrigerant is condensing at, then compare that to the leaving water. The gap between them is the approach, and the approach is what tells you the condenser is dirty.' },
+    amps: { label: 'Compressor A current', unit: 'A', lo: 0, hi: 700,
+      expected: 'Should rise with lift; compare to nameplate RLA.',
+      why: { b: 'High current confirms the compressor really is working against high head, rather than a bad transducer reading.', t: 'Corroborates real lift vs sensor error.' },
+      how: 'Clamp each leg at the starter. Note phase imbalance while you are there.',
+      teach: 'If pressure reads high but the compressor draws normal current, the machine may not actually be under high head — suspect the pressure sensor before condemning the condenser.' },
+  };
+
+  order = ['ecwt', 'lcwt', 'gpm', 'dp', 'amps'];
+
+  ptTables = {
+    'R-134a': [[71.2, 70], [86.8, 80], [104.3, 90], [124.2, 100], [146.4, 110], [171.2, 120], [198.7, 130], [229.2, 140]],
+    'R-410A': [[42.5, 10], [58.8, 20], [78.3, 30], [101.6, 40], [129.2, 50], [161.5, 60], [199.0, 70], [242.1, 80], [291.4, 90], [347.4, 100], [410.7, 110], [482.0, 120]],
+    'R-404A': [[24.3, 0], [45.5, 20], [75.0, 40], [114.5, 60], [166.4, 80], [232.7, 100], [315.9, 120]],
+    'R-22': [[24.0, 0], [43.0, 20], [68.5, 40], [102.5, 60], [144.0, 80], [195.9, 100], [259.9, 120]],
+  };
+
+  eq() {
+    const p = this.props || {};
+    return {
+      manufacturer: p.manufacturer || 'Carrier', model: p.model || '30HXC-186',
+      serial: p.serial || '4108F42715', type: p.equipmentType || 'Water-cooled chiller',
+      tons: p.capacityTons || 186, refrigerant: p.refrigerant || 'R-134a',
+      metering: p.meteringDevice || 'EEV', compressor: p.compressor || 'Scroll',
+      circuits: p.circuits || 2, voltage: p.voltage || '460 V', phase: p.phase || '3Ø',
+    };
+  }
+
+  hasPt() { return !!this.ptTables[this.eq().refrigerant]; }
+
+  sat134(psig) {
+    const t = this.ptTables[this.eq().refrigerant];
+    if (!t) return null;
+    if (psig <= t[0][0]) return t[0][1];
+    for (let i = 1; i < t.length; i++) {
+      if (psig <= t[i][0]) {
+        const [p0, t0] = t[i - 1], [p1, t1] = t[i];
+        return t0 + (psig - p0) * (t1 - t0) / (p1 - p0);
+      }
+    }
+    return t[t.length - 1][1];
+  }
+
+  metrics() {
+    const r = this.state.readings;
+    const m = {};
+    if (r.ecwt != null && r.lcwt != null) m.dt = r.lcwt - r.ecwt;
+    if (r.dp != null) { const c = this.sat134(r.dp); if (c != null) m.condT = c; }
+    if (m.condT != null && r.lcwt != null) m.approach = m.condT - r.lcwt;
+    return m;
+  }
+
+  causeList() {
+    const r = this.state.readings, m = this.metrics();
+    const n = this.order.filter(k => r[k] != null).length;
+    if (n < 2) return [];
+    const w = { flow: 20, foul: 20, ncg: 14, over: 14, tower: 12, sensor: 10 };
+    if (m.dt != null) {
+      if (m.dt > 13) { w.flow += 46; w.foul -= 4; }
+      else if (m.dt < 7) { w.flow -= 14; w.foul += 6; w.over += 4; }
+      else { w.flow -= 12; w.foul += 6; }
+    }
+    if (r.ecwt != null && r.ecwt > 87) w.tower += 34;
+    if (r.gpm != null) { if (r.gpm < 950) w.flow += 42; else { w.flow -= 26; w.foul += 12; w.ncg += 8; } }
+    if (m.approach != null) {
+      if (m.approach > 12) { w.foul += 40; w.ncg += 22; w.sensor -= 4; }
+      else if (m.approach > 7) { w.foul += 18; w.ncg += 8; }
+      else { w.foul -= 16; w.ncg -= 8; w.over += 6; w.sensor += 10; }
+    }
+    if (r.amps != null) { if (r.amps > 380) w.sensor -= 8; else if (r.dp != null && r.dp > 170) w.sensor += 30; }
+    const meta = {
+      flow: ['Low condenser-water flow', 'Condenser ΔT of ' + (m.dt != null ? m.dt.toFixed(0) + ' °F' : 'unknown') + ' against a design 10 °F points at water side, not refrigerant side. Strainer, valve position, or pump.'],
+      foul: ['Fouled condenser tubes', 'Approach of ' + (m.approach != null ? m.approach.toFixed(1) + ' °F' : 'unknown') + ' with adequate flow means heat is not crossing the tube wall. Scale, biofilm, or mud.'],
+      ncg: ['Non-condensables in condenser', 'Air or nitrogen raises condensing pressure above saturation for the water temperature. Purge history and a standing pressure test separate this from fouling.'],
+      over: ['Refrigerant overcharge', 'Excess charge floods condenser surface and raises head. Only credible after flow and fouling are cleared, and requires charge records.'],
+      tower: ['Cooling tower / high entering water', 'Entering water above design shifts the whole circuit up. Tower fan, sump level, fill condition, wet-bulb — the chiller may be a victim here.'],
+      sensor: ['Pressure transducer or control fault', 'A reading that disagrees with compressor current and water temperatures may be the sensor, not the system. Verify against a calibrated gauge before any repair.'],
+    };
+    let list = Object.keys(w).map(k => ({ k, v: Math.max(1, w[k]) }));
+    const tot = list.reduce((a, b) => a + b.v, 0);
+    list = list.map(x => ({ ...x, pct: Math.round(x.v / tot * 100) })).sort((a, b) => b.pct - a.pct);
+    return list.map((x, i) => {
+      const tier = x.pct >= 45 ? 'MOST LIKELY' : x.pct >= 15 ? 'POSSIBLE' : x.pct >= 7 ? 'LESS LIKELY' : 'UNLIKELY';
+      const color = i === 0 ? '#FFB020' : x.pct >= 15 ? '#4FD1E0' : '#7E888F';
+      return { name: meta[x.k][0], why: meta[x.k][1], pct: x.pct, pctText: x.pct + '%', barWidth: x.pct + '%', tier, color, border: i === 0 ? 'rgba(255,176,32,.3)' : 'rgba(255,255,255,.08)', key: x.k };
+    });
+  }
+
+  flagText() {
+    const r = this.state.readings, m = this.metrics(), f = [];
+    const E = this.eq();
+    if (!this.hasPt()) f.push('I do not have a verified pressure–temperature table cached for ' + E.refrigerant + ' on this device, so I will not convert your discharge pressure to a saturation temperature — I would be guessing. Pull the manufacturer PT chart for ' + E.refrigerant + ' and I will keep ranking on everything else.');
+    if (E.type.indexOf('chiller') < 0) f.push('This session was built around a water-cooled chiller sequence. You have identified a ' + E.type.toLowerCase() + ', so treat the condenser-water steps as generic until the ' + E.manufacturer + ' procedure for this equipment is loaded.');
+    if (m.dt != null && m.dt < 0) f.push('Leaving condenser water reads colder than entering. On a running chiller that is not physically possible — verify probe placement or sensor calibration before I use these numbers.');
+    if (m.approach != null && m.approach < 0) f.push('Discharge pressure converts to a condensing temperature below the leaving water temperature. One of the two is wrong; check the transducer against a calibrated gauge.');
+    if (r.dp != null && r.dp > 260) f.push('That discharge pressure is above the relief setting for this machine — confirm the gauge and confirm the machine is actually running.');
+    if (r.amps != null && r.dp != null && r.amps < 120 && r.dp > 170) f.push('High head with low compressor current is contradictory. Confirm which compressor is running and re-read current on all three legs.');
+    return f.join(' ');
+  }
+
+  nextStep() {
+    const r = this.state.readings;
+    if (this.state.repair && this.state.verifyDp == null) {
+      return { kind: 'measure', id: 'dp', verify: true, title: 'Final discharge pressure after repair', tag: 'VERIFICATION · REQUIRED TO CLOSE',
+        rows: [['WHY', 'A repair is not proven until the number that tripped the machine comes back to where it belongs.'],
+          ['HOW', 'Run at similar load and entering water, let it stabilize 10 minutes, then read discharge pressure and recompute approach.'],
+          ['EXPECTED', 'Approach back under about 5 °F at design flow.'],
+          ['IF NORMAL', 'Session closes with before/after documented in the report.'],
+          ['IF ABNORMAL', 'Root cause was not addressed — return to ranked causes with the new data.']],
+        action: 'LOG FINAL READING', teach: 'Verification is what separates a repair from a parts swap. Same conditions, same measurement, documented before and after.' };
+    }
+    const miss = this.order.find(k => r[k] == null);
+    if (miss) {
+      const d = this.defs[miss];
+      return { kind: 'measure', id: miss, title: d.label, tag: 'ONE MEASUREMENT · ' + d.unit,
+        rows: [['WHY', this.state.mode === 'tech' ? d.why.t : d.why.b], ['HOW', d.how], ['EXPECTED', d.expected],
+          ['IF NORMAL', 'I narrow the ranking and hand you the next single test.'], ['IF ABNORMAL', 'I flag it and re-rank before you touch anything.']],
+        action: 'LOG THIS READING', teach: d.teach };
+    }
+    const top = this.causeList()[0];
+    const map = {
+      flow: { title: 'Prove condenser-water flow at the pump', rows: [['WHY', 'Flow is the top-ranked cause from your ΔT and meter reading. Confirm it before opening the condenser.'], ['HOW', 'Take pump suction and discharge pressure, convert to head, read GPM off the curve. Then check strainer differential and isolation valve position.'], ['EXPECTED', 'Head and GPM on the curve near design; strainer drop under a few PSI.'], ['IF NORMAL', 'Flow is fine — I move fouling to the top and we look at tube condition.'], ['IF ABNORMAL', 'Clean strainer, verify valve, check pump impeller and rotation.']], teach: 'The pump curve turns two pressure readings into a flow number without a flow meter.' },
+      foul: { title: 'Assess condenser tube condition', rows: [['WHY', 'Flow is adequate and approach is high — heat is not crossing the tube wall.'], ['HOW', 'Log approach at steady load, then pull heads and inspect or borescope the tubes. Compare against the approach recorded at the last cleaning.'], ['EXPECTED', 'Approach within about 2 °F of the post-cleaning baseline.'], ['IF NORMAL', 'Tubes are clean — test for non-condensables next.'], ['IF ABNORMAL', 'Brush or chemically clean, then re-baseline approach and look at water treatment.']], teach: 'Approach is the condenser report card: refrigerant condensing temperature minus leaving water temperature.' },
+      ncg: { title: 'Standing pressure test for non-condensables', rows: [['WHY', 'Pressure sits above saturation for the water temperature with clean tubes and good flow.'], ['HOW', 'Shut down, let refrigerant equalize to condenser water temperature, compare standing pressure to the saturation value for that temperature.'], ['EXPECTED', 'Standing pressure equals saturation for the measured temperature.'], ['IF NORMAL', 'No air present — reconsider charge and controls.'], ['IF ABNORMAL', 'Purge, then find the leak or service practice that let air in.']], teach: 'Air does not condense, so it takes up condenser volume and adds its own partial pressure on top of the refrigerant.' },
+      tower: { title: 'Verify tower capacity and wet-bulb approach', rows: [['WHY', 'Entering condenser water is above design — the chiller may be reacting to a tower problem.'], ['HOW', 'Measure outdoor wet-bulb, compare to entering water; verify fan operation and speed, sump level, spray distribution, fill and basin condition.'], ['EXPECTED', 'Tower approach to wet-bulb near design, typically single digits.'], ['IF NORMAL', 'Tower is fine — return to the condenser side.'], ['IF ABNORMAL', 'Correct tower capacity first; do not chase the chiller.']], teach: 'A chiller alarm frequently originates outside the chiller. Diagnose the plant, not the box.' },
+      over: { title: 'Review charge records before adjusting charge', rows: [['WHY', 'Overcharge is only credible once flow, fouling and air are cleared.'], ['HOW', 'Pull charge history and refrigerant added on past calls; verify level in the sight glass at the manufacturer condition.'], ['EXPECTED', 'Charge matching nameplate and documented additions.'], ['IF NORMAL', 'Charge is not the cause.'], ['IF ABNORMAL', 'Recover to the specified charge and weigh what you remove.']], teach: 'Never adjust charge from pressure alone on a chiller — use the manufacturer method.' },
+      sensor: { title: 'Verify the transducer against a calibrated gauge', rows: [['WHY', 'Your readings disagree with each other, so the sensor is a live suspect.'], ['HOW', 'Install a calibrated gauge on the discharge port, compare to the controller value at steady state.'], ['EXPECTED', 'Agreement within the controller tolerance.'], ['IF NORMAL', 'Sensor is good — the pressure is real; continue on the system side.'], ['IF ABNORMAL', 'Replace or recalibrate the transducer and re-evaluate before any mechanical work.']], teach: 'Confirm the instrument before condemning the machine — a bad sensor can look exactly like a bad condenser.' },
+    };
+    const c = map[top ? top.key : 'foul'];
+    return { kind: 'inspect', title: c.title, tag: 'HANDS-ON TEST · TOP-RANKED CAUSE', rows: c.rows, action: 'MARK TEST COMPLETE', teach: c.teach };
+  }
+
+  openKeypad(id, verify) {
+    this.setState({ keypad: { id, verify: !!verify }, draft: '' });
+  }
+
+  commitReading = () => {
+    const k = this.state.keypad;
+    if (!k) return;
+    const v = parseFloat(this.state.draft);
+    if (isNaN(v)) return;
+    if (k.id.indexOf('calc_') === 0) {
+      const f = k.id.slice(5);
+      this.setState({ calc: { ...this.state.calc, [f]: v }, keypad: null, draft: '' });
+      return;
+    }
+    if (k.verify) { this.setState({ verifyDp: v, keypad: null, draft: '', screen: 'report' }); return; }
+    this.setState({ readings: { ...this.state.readings, [k.id]: v }, keypad: null, draft: '' });
+  };
+
+  key = (ch) => () => {
+    let d = this.state.draft;
+    if (ch === 'del') d = d.slice(0, -1);
+    else if (ch === '.') { if (d.indexOf('.') < 0) d += '.'; }
+    else if (d.length < 5) d += ch;
+    this.setState({ draft: d });
+  };
+
+  go = (s) => () => this.setState({ screen: s, voiceOpen: false });
+
+  renderVals() {
+    const st = this.state, r = st.readings, m = this.metrics(), E = this.eq();
+    const vDp = st.verifyDp;
+    let vf = { tag: 'VERIFICATION PENDING', line: 'Log the final discharge pressure to close this job.', report: 'Pending final readings.', color: '#8B959C', bg: '#12171B', border: 'rgba(255,255,255,.08)' };
+    if (vDp != null) {
+      const cT = this.sat134(vDp), ap = (cT != null && r.lcwt != null) ? cT - r.lcwt : null;
+      if (ap == null) {
+        vf = { tag: 'RECORDED · NOT VERIFIED', color: '#FFB020', bg: 'rgba(255,176,32,.08)', border: 'rgba(255,176,32,.35)',
+          line: 'Final discharge pressure ' + vDp + ' PSIG recorded. ' + (cT == null ? 'No verified PT table for ' + E.refrigerant + ' on this device, so I will not estimate the saturation conversion.' : 'I need a matching leaving-water temperature before I can call the approach restored.'),
+          report: 'Final pressure recorded but the approach could not be computed from verified data — this job should not be closed as verified.' };
+      } else if (ap <= 7) {
+        vf = { tag: 'VERIFIED · APPROACH RESTORED', color: '#4ADE9A', bg: 'rgba(74,222,154,.08)', border: 'rgba(74,222,154,.35)',
+          line: 'Discharge pressure ' + vDp + ' PSIG → condensing ' + cT.toFixed(0) + ' °F, approach ' + ap.toFixed(1) + ' °F at the same entering water — back inside the normal band.',
+          report: 'Final discharge pressure ' + vDp + ' PSIG at matched entering water; approach ' + ap.toFixed(1) + ' °F, within the normal band. Problem → diagnosis → repair → verification documented.' };
+      } else {
+        vf = { tag: 'NOT VERIFIED · STILL OUT OF RANGE', color: '#FF5A47', bg: 'rgba(255,90,71,.09)', border: 'rgba(255,90,71,.35)',
+          line: 'Discharge pressure ' + vDp + ' PSIG → condensing ' + cT.toFixed(0) + ' °F, approach ' + ap.toFixed(1) + ' °F. That is still ' + (ap > 12 ? 'far above' : 'above') + ' the normal band, so the root cause was not addressed. Go back to the ranking with this new data.',
+          report: 'Final discharge pressure ' + vDp + ' PSIG; approach ' + ap.toFixed(1) + ' °F — still out of range. Repair performed did not correct the root cause; job left open.' };
+      }
+    }
+    const causes = this.causeList(), next = this.nextStep(), flag = this.flagText();
+    const A = '#FFB020', dim = '#7E888F';
+    const readingRows = this.order.map(id => {
+      const d = this.defs[id], v = r[id];
+      const bad = (id === 'lcwt' && m.dt != null && m.dt < 0) || (id === 'dp' && ((m.approach != null && m.approach < 0) || v > 260));
+      return { label: d.label, display: v == null ? '——' : v + ' ' + d.unit,
+        note: v == null ? 'NOT LOGGED' : bad ? 'FLAGGED · VERIFY' : 'MEASURED · THIS SESSION',
+        noteColor: v == null ? '#4F585E' : bad ? '#FF8A7A' : '#5F696F',
+        valColor: v == null ? '#4F585E' : bad ? '#FF8A7A' : '#E8EBED',
+        bg: v == null ? '#101418' : '#15191D',
+        onEdit: () => this.openKeypad(id) };
+    });
+    const derived = [];
+    if (m.dt != null) derived.push({ label: 'Condenser ΔT', value: m.dt.toFixed(1) + '°', tag: m.dt > 13 ? 'ABOVE DESIGN' : m.dt < 7 ? 'BELOW DESIGN' : 'IN RANGE', color: m.dt > 13 || m.dt < 7 ? '#FF8A7A' : '#4ADE9A' });
+    if (m.condT != null) derived.push({ label: 'Condensing temp · ' + this.eq().refrigerant, value: m.condT.toFixed(0) + '°', tag: 'FROM PT CHART', color: '#E8EBED' });
+    if (m.approach != null) derived.push({ label: 'Condenser approach', value: m.approach.toFixed(1) + '°', tag: m.approach > 12 ? 'FAR HIGH' : m.approach > 7 ? 'HIGH' : 'NORMAL', color: m.approach > 7 ? '#FF8A7A' : '#4ADE9A' });
+    const nCount = this.order.filter(k => r[k] != null).length;
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'del'].map(ch => ({
+      label: ch === 'del' ? '⌫' : ch, press: this.key(ch),
+      bg: ch === 'del' ? '#15191D' : '#1B2126', fg: ch === 'del' ? dim : '#E8EBED' }));
+    const kp = st.keypad;
+    let kpLabel = '', kpUnit = '', kpHint = '', kpHintColor = dim;
+    if (kp) {
+      if (kp.id.indexOf('calc_') === 0) {
+        kpLabel = kp.id === 'calc_btu' ? 'Load' : 'Design ΔT';
+        kpUnit = kp.id === 'calc_btu' ? 'BTU/HR' : '°F';
+        kpHint = 'GLYCOL-CORRECTED CONSTANT IN USE';
+      } else {
+        const d = this.defs[kp.id];
+        kpLabel = kp.verify ? 'Final ' + d.label.toLowerCase() : d.label;
+        kpUnit = d.unit;
+        const v = parseFloat(st.draft);
+        if (!isNaN(v) && (v < d.lo || v > d.hi)) { kpHint = 'OUTSIDE PLAUSIBLE RANGE FOR THIS EQUIPMENT — I WILL FLAG IT'; kpHintColor = '#FF8A7A'; }
+        else kpHint = d.expected.toUpperCase();
+      }
+    }
+    const glycol = 485;
+    const gpm = st.calc.dt > 0 ? st.calc.btu / (glycol * st.calc.dt) : 0;
+    const nf = (x) => x.toLocaleString('en-US');
+    return {
+      isHome: st.screen === 'home', isSession: st.screen === 'session', isFault: st.screen === 'fault',
+      isScan: st.screen === 'scan', isCalc: st.screen === 'calc', isHistory: st.screen === 'history',
+      isTraining: st.screen === 'training', isReport: st.screen === 'report',
+      goHome: this.go('home'), goSession: this.go('session'), goFault: this.go('fault'), goScan: this.go('scan'),
+      goCalc: this.go('calc'), goHistory: this.go('history'), goTraining: this.go('training'),
+      setBeginner: () => this.setState({ mode: 'beginner' }), setTech: () => this.setState({ mode: 'tech', teach: false }),
+      begBg: st.mode === 'beginner' ? A : 'transparent', begFg: st.mode === 'beginner' ? '#171203' : dim,
+      techBg: st.mode === 'tech' ? A : 'transparent', techFg: st.mode === 'tech' ? '#171203' : dim,
+      readingRows, readCount: nCount + '/5', derived, hasDerived: derived.length > 0,
+      unitTitle: E.model + ' · ' + E.type,
+      chips: [
+        { t: E.refrigerant, bg: this.hasPt() ? '#15191D' : 'rgba(255,90,71,.12)', fg: this.hasPt() ? '#B9C1C6' : '#FF8A7A' },
+        { t: E.tons + ' TON', bg: '#15191D', fg: '#B9C1C6' },
+        { t: E.voltage.replace(' ', '') + '/' + E.phase, bg: '#15191D', fg: '#B9C1C6' },
+        { t: E.compressor.toUpperCase(), bg: '#15191D', fg: '#B9C1C6' },
+        { t: E.circuits + ' CIRCUIT' + (E.circuits === 1 ? '' : 'S'), bg: '#15191D', fg: '#B9C1C6' },
+        { t: E.metering.toUpperCase(), bg: '#15191D', fg: '#B9C1C6' },
+        { t: 'ALM: HI DISCH PRESS', bg: 'rgba(255,90,71,.12)', fg: '#FF8A7A' },
+      ],
+      equipRows: [
+        ['MANUFACTURER', E.manufacturer], ['MODEL', E.model], ['SERIAL', E.serial],
+        ['TYPE', E.type.toUpperCase()], ['REFRIGERANT', E.refrigerant + (this.hasPt() ? ' · PT CACHED' : ' · NO PT DATA')],
+        ['METERING', E.metering], ['ELECTRICAL', E.voltage + ' / ' + E.phase], ['CAPACITY', E.tons + ' TONS'],
+      ].map(([k, v]) => ({ k, v, color: v.indexOf('NO PT DATA') > -1 ? '#FF8A7A' : '#E8EBED' })),
+      brandNote: E.manufacturer === 'Generic / unknown'
+        ? 'NO MANUFACTURER SELECTED — EVERY PROCEDURE BELOW IS GENERIC, NOT BRAND-SPECIFIC'
+        : E.manufacturer.toUpperCase() + ' PROCEDURE WHERE DOCUMENTED · GENERIC WHERE MARKED',
+      hasFlag: flag.length > 0, flagText: flag,
+      causes, hasCauses: causes.length > 0, noData: causes.length === 0,
+      evidenceTag: nCount === 0 ? 'NO EVIDENCE YET' : 'FROM ' + nCount + ' MEASUREMENT' + (nCount === 1 ? '' : 'S'),
+      nextHeading: next.kind === 'measure' ? 'CHECK THIS NEXT' : 'NEXT TEST',
+      nextTitle: next.title, nextTag: next.tag,
+      nextRows: next.rows.map(([k, v]) => ({ k, v, color: k === 'IF ABNORMAL' ? '#FF8A7A' : k === 'IF NORMAL' ? '#4ADE9A' : dim })),
+      nextActionLabel: next.action,
+      nextAction: next.kind === 'measure' ? () => this.openKeypad(next.id, next.verify) : () => this.setState({ repairOpen: true }),
+      teach: st.teach && st.mode === 'beginner', teachText: next.teach,
+      teachLabel: st.mode === 'tech' ? 'TECH MODE' : st.teach ? 'HIDE' : 'TEACH ME',
+      toggleTeach: () => this.setState({ teach: !st.teach, mode: 'beginner' }),
+      canRepair: nCount === 5 && !st.repair, openRepair: () => this.setState({ repairOpen: true }),
+      repairOpen: st.repairOpen, closeRepair: () => this.setState({ repairOpen: false }),
+      repairOptions: ['Cleaned condenser tubes', 'Purged non-condensables', 'Cleared strainer / restored flow', 'Replaced discharge transducer'].map(n => ({
+        n, press: () => this.setState({ repair: n, repairOpen: false, teach: false }) })),
+      keypadOpen: !!kp, kpLabel, kpUnit, kpDraft: st.draft === '' ? '0' : st.draft, kpHint, kpHintColor, keys,
+      closeKeypad: () => this.setState({ keypad: null, draft: '' }), commitKeypad: () => this.commitReading(),
+      voiceEntry: () => this.setState({ voiceOpen: true, keypad: null, draft: '' }),
+      voiceOpen: st.voiceOpen, openVoice: () => this.setState({ voiceOpen: true }), closeVoice: () => this.setState({ voiceOpen: false }),
+      voiceLines: [
+        { role: 'TECH', t: 'HVACue, I have a water-cooled chiller tripping on high discharge pressure.', align: 'flex-end', bg: '#1B2126', border: 'rgba(255,255,255,.1)', who: '#B9C1C6' },
+        { role: 'HVACUE', t: 'Understood. Entering condenser-water temperature?', align: 'flex-start', bg: 'rgba(79,209,224,.08)', border: 'rgba(79,209,224,.28)', who: '#4FD1E0' },
+        { role: 'TECH', t: 'Eighty four.', align: 'flex-end', bg: '#1B2126', border: 'rgba(255,255,255,.1)', who: '#B9C1C6' },
+        { role: 'HVACUE', t: 'Logged, 84 degrees. Leaving condenser water?', align: 'flex-start', bg: 'rgba(79,209,224,.08)', border: 'rgba(79,209,224,.28)', who: '#4FD1E0' },
+        { role: 'TECH', t: 'Ninety six.', align: 'flex-end', bg: '#1B2126', border: 'rgba(255,255,255,.1)', who: '#B9C1C6' },
+        { role: 'HVACUE', t: 'Condenser delta-T is 12 degrees — within range, so water is moving. Next I need condenser-water flow and discharge pressure to separate a heat-transfer problem from a refrigerant-side problem.', align: 'flex-start', bg: 'rgba(79,209,224,.08)', border: 'rgba(79,209,224,.28)', who: '#4FD1E0' },
+      ],
+      faultSeq: ['Confirm the machine is running and note load before anything else.', 'Verify condenser-water flow — pump status, valve position, strainer differential.', 'Read entering and leaving condenser water; compute ΔT.', 'Convert discharge pressure to saturation temperature for this refrigerant.', 'Compute approach against leaving water and compare to the last cleaning baseline.', 'Clamp compressor current to confirm the machine is truly under high lift.', 'Test for non-condensables only after flow and fouling are cleared.'].map((t, i) => ({ n: String(i + 1).padStart(2, '0'), t })),
+      nameplate: [['MANUFACTURER', E.manufacturer.toUpperCase(), '#E8EBED'], ['MODEL', E.model, '#E8EBED'], ['SERIAL', E.serial, '#FF8A7A'], ['TYPE', E.type.toUpperCase(), '#E8EBED'], ['REFRIGERANT', E.refrigerant, this.hasPt() ? '#E8EBED' : '#FF8A7A'], ['METERING', E.metering, '#E8EBED'], ['CAPACITY', E.tons + ' TONS', '#E8EBED'], ['ELECTRICAL', E.voltage + ' / ' + E.phase + ' / 60HZ', '#E8EBED'], ['MCA / MOCP', '412 A / 500 A', '#FF8A7A']].map(([k, v, color]) => ({ k, v, color })),
+      calcGpm: gpm.toFixed(1),
+      calcFields: [
+        { label: 'Load', value: nf(st.calc.btu), unit: 'BTU/HR', onEdit: () => this.openKeypad('calc_btu') },
+        { label: 'Design ΔT', value: String(st.calc.dt), unit: '°F', onEdit: () => this.openKeypad('calc_dt') },
+        { label: 'Fluid', value: '30% PG', unit: '', onEdit: () => {} },
+      ],
+      calcList: [['Superheat', 'PT + line temp'], ['Subcooling', 'Liquid line'], ['Pump head', 'Curve solver'], ['Static pressure', 'ESP + drops'], ['Duct sizing', 'Velocity method'], ['Three-phase kW', 'V · A · PF · √3']].map(([n, s]) => ({ n, s })),
+      plant: [
+        { n: 'Chiller plant', s: '2 UNITS', indent: '14px', dot: A, color: '#E8EBED' },
+        { n: 'CH-1 · 30HXC-186', s: 'ALARM', indent: '30px', dot: '#FF5A47', color: '#FF8A7A' },
+        { n: 'CH-2 · 30HXC-186', s: 'RUN', indent: '30px', dot: '#4ADE9A', color: '#B9C1C6' },
+        { n: 'CT-1 cooling tower', s: 'RUN', indent: '30px', dot: '#4ADE9A', color: '#B9C1C6' },
+        { n: 'CWP-1 / CWP-2', s: 'RUN / OFF', indent: '30px', dot: '#4ADE9A', color: '#B9C1C6' },
+        { n: 'Boiler plant', s: '2 UNITS', indent: '14px', dot: dim, color: '#E8EBED' },
+        { n: 'AHU-1 … AHU-4', s: 'BAS', indent: '14px', dot: dim, color: '#B9C1C6' },
+      ],
+      history: [
+        { d: '2026-03-11', tag: 'CLEARED', color: '#4ADE9A', t: 'High discharge pressure', b: 'Approach 13.8 °F at design flow. Condenser tubes brush-cleaned; approach returned to 4.2 °F.' },
+        { d: '2025-08-02', tag: 'CLEARED', color: '#4ADE9A', t: 'High discharge pressure', b: 'Tower sump low, entering water 91 °F. Makeup valve rebuilt. No refrigerant work performed.' },
+        { d: '2025-04-19', tag: 'PM', color: dim, t: 'Annual maintenance', b: 'Baseline approach 3.1 °F recorded, oil analysis normal, no refrigerant added.' },
+      ],
+      verifyTag: vf.tag, verifyLine: vf.line, verifyColor: vf.color, verifyBg: vf.bg, verifyBorder: vf.border,
+      verifyFailed: vf.tag.indexOf('NOT VERIFIED') === 0, backToRanking: () => this.setState({ screen: 'session' }),
+      report: [
+        ['EQUIPMENT', E.manufacturer + ' ' + E.model + ' ' + E.type.toLowerCase() + ', S/N ' + E.serial + ', ' + E.refrigerant + ', ' + E.tons + ' tons, ' + E.voltage + '/' + E.phase + ', ' + E.metering + ' metering — Bay Tower, chiller plant CH-1.'],
+        ['COMPLAINT', 'Machine tripping on high discharge pressure, repeated lockouts through the afternoon peak.'],
+        ['MEASUREMENTS', this.order.filter(k => r[k] != null).map(k => this.defs[k].label + ' ' + r[k] + ' ' + this.defs[k].unit).join(' · ') || '—'],
+        ['DERIVED', (m.dt != null ? 'Condenser ΔT ' + m.dt.toFixed(1) + ' °F. ' : '') + (m.condT != null ? 'Condensing ' + m.condT.toFixed(0) + ' °F. ' : '') + (m.approach != null ? 'Approach ' + m.approach.toFixed(1) + ' °F.' : '')],
+        ['ROOT CAUSE', (causes[0] ? causes[0].name + ' — ' + causes[0].pct + '% at close of diagnosis. ' + causes[0].why : '—')],
+        ['REPAIR', st.repair || '—'],
+        ['VERIFICATION', vf.report],
+        ['SOURCES', 'Manufacturer literature for code meaning and design approach; industry guideline for condenser ΔT; remaining reasoning inferred by HVACue from this session\u2019s measurements.'],
+      ].map(([k, v]) => ({ k, v })),
+    };
+  }
+}
+</script>
+</body>
+</html>

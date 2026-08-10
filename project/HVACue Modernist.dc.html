@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#e6e4e4;font-family:"Archivo",system-ui,sans-serif;color:#201e1d}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+::-webkit-scrollbar{width:0}
+::selection{background:#ffc4b8}
+a{color:#ae1800;text-decoration:none}a:hover{color:#ec3013}
+@keyframes hvq-scan{from{transform:translateY(0)}to{transform:translateY(132px)}}
+@keyframes hvq-rise{from{transform:translateY(16px)}to{transform:translateY(0)}}
+</style></helmet>
+
+<div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;padding:40px 36px 72px">
+
+<div style="width:300px;flex:none;padding-top:8px">
+  <div style="display:flex;align-items:center;gap:8px">
+    <div style="width:14px;height:14px;background:#ec3013"></div>
+    <div style="font:800 22px/1 Archivo;letter-spacing:-.02em">HVACue</div>
+  </div>
+  <div style="height:2px;background:#201e1d;margin:14px 0"></div>
+  <div style="font:600 11px/1 Archivo;letter-spacing:.14em;color:#7d7979">MODERNIST BUILD · TURN 2</div>
+  <p style="font:400 13px/1.6 Archivo;color:#444141;margin:16px 0 0;text-wrap:pretty">Rebuilt on the Modernist system: light ground, one red accent, zero radius, 2px rules, Archivo throughout. Red now carries a single job — <b>abnormal</b>.</p>
+  <div style="height:1px;background:#d7d3d3;margin:18px 0"></div>
+  <div style="font:600 11px/1 Archivo;letter-spacing:.14em;color:#7d7979">WHAT CHANGED</div>
+  <p style="font:400 13px/1.6 Archivo;color:#444141;margin:12px 0 0;text-wrap:pretty">Readings now live on one <b>gauge set</b> — every channel on a single card, tap any cell to key it in, no wizard. Provenance moved to a small red square beside a value; tap it for the <b>sources</b> sheet. Depth is <b>AUTO</b> and switches itself once you start working fast.</p>
+  <p style="font:400 13px/1.6 Archivo;color:#444141;margin:12px 0 0;text-wrap:pretty">Two scenarios run on the same engine: the water-cooled chiller and a 4-ton R‑410A split on a no-cooling call. Pick either from the home screen.</p>
+  <div style="height:1px;background:#d7d3d3;margin:18px 0"></div>
+  <div style="font:600 11px/1 Archivo;letter-spacing:.14em;color:#7d7979">TRY</div>
+  <p style="font:400 13px/1.6 Archivo;color:#444141;margin:12px 0 0;text-wrap:pretty">Key in a supply air temperature above return air, or 300 PSIG on the chiller — the data check refuses it. Leave the gauge set empty and the engine refuses to show a confidence number at all.</p>
+  <p style="font:400 12.5px/1.6 Archivo;color:#7d7979;margin:16px 0 0;text-wrap:pretty">The Android frame is the same session on platform chrome — one codebase, two shells.</p>
+</div>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" style="flex:none" hint-size="402px,874px">
+<div style="height:100%;display:flex;flex-direction:column;background:#f3f2f2;position:relative;overflow:hidden;font-family:Archivo,system-ui,sans-serif;color:#201e1d">
+
+<div style="padding:58px 16px 10px;border-bottom:2px solid #201e1d;display:flex;align-items:center;gap:9px;flex:none">
+  <div style="width:12px;height:12px;background:#ec3013"></div>
+  <div style="font:800 17px/1 Archivo;letter-spacing:-.02em;flex:1">HVACue</div>
+  <div style="display:flex;border:1px solid #201e1d">
+    <sc-for list="{{ depthSegs }}" as="s" hint-placeholder-count="3">
+      <div onClick="{{ s.press }}" style="padding:7px 9px;font:700 10px/1 Archivo;letter-spacing:.1em;background:{{ s.bg }};color:{{ s.fg }};border-left:{{ s.bl }}">{{ s.label }}</div>
+    </sc-for>
+  </div>
+</div>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;overflow:auto">
+  <div onClick="{{ goSession }}" style="background:#ec3013;color:#f3f2f2;padding:22px 16px 18px">
+    <div style="font:800 40px/.92 Archivo;letter-spacing:-.035em">DIAGNOSE.<br>VERIFY.<br>FIX.</div>
+    <div style="height:2px;background:rgba(243,242,242,.5);margin:16px 0 12px"></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="font:700 13px/1.3 Archivo;flex:1">Start a session — the engine asks for one measurement at a time and ranks only from what you give it.</div>
+      <div style="font:800 24px/1 Archivo">→</div>
+    </div>
+  </div>
+
+  <div style="border-bottom:2px solid #201e1d;padding:14px 16px 12px">
+    <div style="font:600 10.5px/1 Archivo;letter-spacing:.16em;color:#7d7979">OPEN CALLS · TAP TO RESUME</div>
+  </div>
+  <sc-for list="{{ jobs }}" as="j" hint-placeholder-count="2">
+    <div onClick="{{ j.press }}" style="display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(32,30,29,.4);background:{{ j.bg }}">
+      <div style="width:10px;height:10px;background:{{ j.dot }};margin-top:4px;flex:none"></div>
+      <div style="flex:1">
+        <div style="font:600 10.5px/1 Archivo;letter-spacing:.12em;color:#7d7979">{{ j.no }} · {{ j.site }}</div>
+        <div style="font:800 16px/1.15 Archivo;margin-top:7px;letter-spacing:-.01em">{{ j.unit }}</div>
+        <div style="font:500 12.5px/1.35 Archivo;color:#444141;margin-top:5px">{{ j.alarm }}</div>
+      </div>
+      <div style="font:600 10.5px/1 Archivo;color:#7d7979;align-self:center">{{ j.logged }}</div>
+    </div>
+  </sc-for>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid #201e1d">
+    <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="6">
+      <div onClick="{{ t.press }}" style="padding:15px 14px 14px;border-bottom:1px solid rgba(32,30,29,.4);border-right:{{ t.br }};min-height:96px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="font:600 10.5px/1 Archivo;letter-spacing:.14em;color:#7d7979">{{ t.n }}</div>
+        <div>
+          <div style="font:800 15px/1.1 Archivo;letter-spacing:-.01em">{{ t.title }}</div>
+          <div style="font:500 11.5px/1.3 Archivo;color:#605d5d;margin-top:5px">{{ t.sub }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding:16px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div style="padding:7px 9px;border:1px solid #201e1d;font:600 10.5px/1 Archivo;letter-spacing:.1em">OFFLINE READY</div>
+      <div style="padding:7px 9px;border:1px solid #201e1d;font:600 10.5px/1 Archivo;letter-spacing:.1em">142 DOCS CACHED</div>
+      <div style="padding:7px 9px;background:#fff2ef;border:1px solid #ec3013;font:600 10.5px/1 Archivo;letter-spacing:.1em;color:#ae1800">2 UNSYNCED</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSession }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto;padding-bottom:88px">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #201e1d">
+    <div onClick="{{ goHome }}" style="width:46px;border-right:1px solid rgba(32,30,29,.4);display:flex;align-items:center;justify-content:center;font:800 20px/1 Archivo">‹</div>
+    <div style="flex:1;padding:12px 14px">
+      <div style="font:600 10.5px/1 Archivo;letter-spacing:.12em;color:#7d7979">{{ jobNo }} · SESSION LIVE · {{ depthTag }}</div>
+      <div style="font:800 17px/1.1 Archivo;margin-top:7px;letter-spacing:-.015em">{{ unitName }}</div>
+      <div style="font:500 12px/1.3 Archivo;color:#444141;margin-top:5px">{{ siteName }}</div>
+    </div>
+    <div onClick="{{ openSources }}" style="width:46px;border-left:1px solid rgba(32,30,29,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+      <div style="width:9px;height:9px;background:#ec3013"></div>
+      <div style="font:600 8px/1 Archivo;letter-spacing:.08em;color:#7d7979">SRC</div>
+    </div>
+  </div>
+
+  <div style="background:#ec3013;color:#f3f2f2;padding:11px 16px;display:flex;align-items:center;gap:10px">
+    <div style="font:800 12px/1 Archivo;letter-spacing:.12em;flex:1">ALARM · {{ alarmText }}</div>
+    <div style="font:600 10.5px/1 Archivo;opacity:.85">{{ alarmSrc }}</div>
+  </div>
+
+  <div style="padding:10px 16px;border-bottom:1px solid rgba(32,30,29,.4);display:flex;gap:7px;flex-wrap:wrap">
+    <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4">
+      <div style="padding:6px 8px;background:#eae9e9;font:600 10.5px/1 Archivo;letter-spacing:.08em;color:#444141">{{ c.t }}</div>
+    </sc-for>
+  </div>
+
+  <div style="padding:16px 16px 0">
+    <div style="display:flex;align-items:baseline;gap:8px">
+      <div style="font:800 12px/1 Archivo;letter-spacing:.14em;flex:1">GAUGE SET</div>
+      <div style="font:600 10.5px/1 Archivo;color:#7d7979">{{ readCount }} LOGGED</div>
+    </div>
+  </div>
+
+  <div style="margin:12px 0 0;border-top:2px solid #201e1d;display:grid;grid-template-columns:1fr 1fr">
+    <sc-for list="{{ channels }}" as="ch" hint-placeholder-count="6">
+      <div onClick="{{ ch.onEdit }}" style="padding:12px 13px 13px;border-bottom:1px solid rgba(32,30,29,.4);border-right:{{ ch.br }};background:{{ ch.bg }}">
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="font:600 10px/1.2 Archivo;letter-spacing:.1em;color:{{ ch.labelColor }};flex:1">{{ ch.label }}</div>
+          <div style="width:6px;height:6px;background:{{ ch.dot }}"></div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-top:9px">
+          <div style="font:800 27px/1 Archivo;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:{{ ch.valColor }}">{{ ch.display }}</div>
+          <div style="font:600 11px/1 Archivo;color:#7d7979">{{ ch.unit }}</div>
+        </div>
+        <div style="font:600 9.5px/1 Archivo;letter-spacing:.08em;color:{{ ch.noteColor }};margin-top:8px">{{ ch.note }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ hasDerived }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:18px 16px 0">
+    <div style="font:800 12px/1 Archivo;letter-spacing:.14em">DERIVED · READ TOGETHER</div>
+  </div>
+  <div style="margin-top:12px;border-top:2px solid #201e1d">
+    <sc-for list="{{ derived }}" as="d" hint-placeholder-count="3">
+      <div style="display:flex;align-items:baseline;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(32,30,29,.4)">
+        <div style="flex:1">
+          <div style="font:700 13px/1.2 Archivo">{{ d.label }}</div>
+          <div style="font:600 9.5px/1 Archivo;letter-spacing:.1em;color:{{ d.tagColor }};margin-top:6px">{{ d.tag }}</div>
+        </div>
+        <div style="font:800 24px/1 Archivo;font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:{{ d.color }}">{{ d.value }}</div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ hasFlag }}" hint-placeholder-val="{{ false }}">
+  <div style="margin-top:18px;background:#ec3013;color:#f3f2f2;padding:15px 16px">
+    <div style="font:800 12px/1 Archivo;letter-spacing:.14em">DATA CHECK</div>
+    <div style="font:600 13.5px/1.45 Archivo;margin-top:9px;text-wrap:pretty">{{ flagText }}</div>
+  </div>
+  </sc-if>
+
+  <div style="padding:18px 16px 0;display:flex;align-items:baseline;gap:8px">
+    <div style="font:800 12px/1 Archivo;letter-spacing:.14em;flex:1">RANKED CAUSES</div>
+    <div style="font:600 10.5px/1 Archivo;color:#7d7979">{{ evidenceTag }}</div>
+  </div>
+
+  <sc-if value="{{ noData }}" hint-placeholder-val="{{ true }}">
+  <div style="margin:12px 16px 0;border:2px solid #201e1d;padding:15px">
+    <div style="font:800 15px/1.25 Archivo;letter-spacing:-.01em;text-wrap:pretty">No confidence number yet — and I'm not going to invent one.</div>
+    <div style="font:500 13px/1.5 Archivo;color:#444141;margin-top:9px;text-wrap:pretty">Give me two channels off the gauge set and I'll start ranking. Everything I show you after that is computed from your numbers, not from a guess about this equipment.</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ vizMeter }}" hint-placeholder-val="{{ false }}">
+  <div style="margin:12px 16px 0">
+    <div style="display:flex;height:26px;border:1px solid #201e1d">
+      <sc-for list="{{ causes }}" as="c" hint-placeholder-count="4">
+        <div style="width:{{ c.barWidth }};background:{{ c.fill }};border-right:1px solid #201e1d"></div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ hasCauses }}" hint-placeholder-val="{{ false }}">
+  <div style="margin-top:12px;border-top:2px solid #201e1d">
+    <sc-for list="{{ causes }}" as="c" hint-placeholder-count="4">
+      <div style="padding:13px 16px;border-bottom:1px solid rgba(32,30,29,.4);background:{{ c.bg }}">
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <div style="font:800 11px/1 Archivo;letter-spacing:.12em;color:{{ c.color }};flex:1">{{ c.tier }}</div>
+          <div style="font:800 20px/1 Archivo;font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:{{ c.color }}">{{ c.pctText }}</div>
+        </div>
+        <div style="font:800 15px/1.2 Archivo;letter-spacing:-.01em;margin-top:8px">{{ c.name }}</div>
+        <sc-if value="{{ vizBars }}" hint-placeholder-val="{{ true }}">
+        <div style="height:6px;background:#d7d3d3;margin-top:10px">
+          <div style="height:6px;background:{{ c.fill }};width:{{ c.barWidth }}"></div>
+        </div>
+        </sc-if>
+        <div style="font:500 12.5px/1.5 Archivo;color:#444141;margin-top:9px;text-wrap:pretty">{{ c.why }}</div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <div style="padding:18px 16px 0">
+    <div style="font:800 12px/1 Archivo;letter-spacing:.14em">{{ nextHeading }}</div>
+  </div>
+  <div style="margin:12px 0 0;border-top:2px solid #201e1d;border-bottom:2px solid #201e1d">
+    <div style="padding:14px 16px;border-bottom:1px solid rgba(32,30,29,.4)">
+      <div style="font:800 19px/1.2 Archivo;letter-spacing:-.02em;text-wrap:pretty">{{ nextTitle }}</div>
+      <div style="font:600 10.5px/1 Archivo;letter-spacing:.12em;color:#7d7979;margin-top:9px">{{ nextTag }}</div>
+    </div>
+    <sc-for list="{{ nextRows }}" as="n" hint-placeholder-count="5">
+      <div style="display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(32,30,29,.4)">
+        <div style="width:82px;flex:none;font:700 9.5px/1.5 Archivo;letter-spacing:.1em;color:{{ n.color }}">{{ n.k }}</div>
+        <div style="flex:1;font:500 12.5px/1.5 Archivo;color:#2d2b2b;text-wrap:pretty">{{ n.v }}</div>
+      </div>
+    </sc-for>
+    <div style="display:flex">
+      <div onClick="{{ nextAction }}" style="flex:1;height:54px;background:#ec3013;color:#f3f2f2;display:flex;align-items:center;padding:0 16px;font:800 13px/1 Archivo;letter-spacing:.08em">{{ nextActionLabel }}<span style="margin-left:auto;font:800 17px/1 Archivo">→</span></div>
+      <div onClick="{{ toggleTeach }}" style="width:112px;height:54px;border-left:1px solid rgba(32,30,29,.4);display:flex;align-items:center;padding:0 14px;font:700 11px/1 Archivo;letter-spacing:.08em;color:#201e1d">{{ teachLabel }}</div>
+    </div>
+    <sc-if value="{{ teach }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:15px 16px;background:#eae9e9;border-top:1px solid rgba(32,30,29,.4)">
+      <div style="font:800 10.5px/1 Archivo;letter-spacing:.14em;color:#ae1800">STRAIGHT TALK</div>
+      <div style="font:500 13px/1.55 Archivo;color:#2d2b2b;margin-top:9px;text-wrap:pretty">{{ teachText }}</div>
+    </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ canRepair }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ openRepair }}" style="margin:14px 16px 0;height:52px;border:2px solid #201e1d;display:flex;align-items:center;padding:0 15px;font:800 12.5px/1 Archivo;letter-spacing:.08em">LOG REPAIR &amp; VERIFY<span style="margin-left:auto;font:800 17px/1 Archivo">→</span></div>
+  </sc-if>
+
+  <div onClick="{{ openSources }}" style="margin:16px 16px 22px;font:600 11px/1.6 Archivo;letter-spacing:.06em;color:#7d7979;text-wrap:pretty">EVERY NUMBER ON THIS SCREEN CARRIES A SOURCE ▪ TAP FOR THE SOURCES SHEET</div>
+</div>
+
+<div style="position:absolute;left:0;right:0;bottom:0;padding:0 0 30px;background:#f3f2f2;border-top:2px solid #201e1d;z-index:20">
+  <div onClick="{{ nextAction }}" style="height:56px;display:flex;align-items:center;padding:0 16px;font:800 13.5px/1 Archivo;letter-spacing:.06em">WHAT SHOULD I CHECK NEXT?<span style="margin-left:auto;width:11px;height:11px;background:#ec3013"></span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFault }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #201e1d">
+    <div onClick="{{ goHome }}" style="width:46px;border-right:1px solid rgba(32,30,29,.4);display:flex;align-items:center;justify-content:center;font:800 20px/1 Archivo">‹</div>
+    <div style="flex:1;padding:14px">
+      <div style="font:800 17px/1 Archivo;letter-spacing:-.015em">Fault code</div>
+      <div style="font:500 11.5px/1 Archivo;color:#7d7979;margin-top:6px">Photograph the controller, or type it</div>
+    </div>
+  </div>
+  <div style="margin:16px;height:172px;background:#eae9e9;border:2px solid #201e1d;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:24px 40px;border:2px solid #ec3013"></div>
+    <div style="position:absolute;left:40px;right:40px;top:24px;height:2px;background:#ec3013;animation:hvq-scan 2.2s ease-in-out infinite alternate"></div>
+    <div style="position:absolute;left:0;right:0;top:66px;text-align:center;font:800 34px/1 Archivo;letter-spacing:-.02em">P.05</div>
+    <div style="position:absolute;left:0;right:0;bottom:12px;text-align:center;font:600 10px/1 Archivo;letter-spacing:.14em;color:#605d5d">HOLD OVER DISPLAY</div>
+  </div>
+  <div style="padding:0 16px">
+    <div style="border:2px solid #201e1d;padding:15px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:8px;height:8px;background:#ec3013"></div>
+        <div style="font:700 10.5px/1 Archivo;letter-spacing:.12em;color:#ae1800">MANUFACTURER LITERATURE · IOM p.42</div>
+      </div>
+      <div style="font:800 20px/1.15 Archivo;letter-spacing:-.02em;margin-top:11px">High discharge pressure trip</div>
+      <div style="font:500 13px/1.5 Archivo;color:#444141;margin-top:9px;text-wrap:pretty">Matched to the controller family on your nameplate. The meaning is quoted, not inferred — where I'm inferring, I'll say so.</div>
+    </div>
+  </div>
+  <div style="padding:18px 16px 0;font:800 12px/1 Archivo;letter-spacing:.14em">SEQUENCE · IN ORDER</div>
+  <div style="margin-top:12px;border-top:2px solid #201e1d">
+    <sc-for list="{{ faultSeq }}" as="s" hint-placeholder-count="7">
+      <div style="display:flex;gap:13px;padding:13px 16px;border-bottom:1px solid rgba(32,30,29,.4)">
+        <div style="font:800 12px/1.35 Archivo;color:#9b9797;width:22px;flex:none;font-variant-numeric:tabular-nums">{{ s.n }}</div>
+        <div style="flex:1;font:500 12.5px/1.45 Archivo;text-wrap:pretty">{{ s.t }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div onClick="{{ goSession }}" style="margin:16px;height:54px;background:#ec3013;color:#f3f2f2;display:flex;align-items:center;padding:0 16px;font:800 13px/1 Archivo;letter-spacing:.08em">RUN THIS AS A SESSION<span style="margin-left:auto;font:800 17px/1 Archivo">→</span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #201e1d">
+    <div onClick="{{ goHome }}" style="width:46px;border-right:1px solid rgba(32,30,29,.4);display:flex;align-items:center;justify-content:center;font:800 20px/1 Archivo">‹</div>
+    <div style="flex:1;padding:14px">
+      <div style="font:800 17px/1 Archivo;letter-spacing:-.015em">Bay Tower</div>
+      <div style="font:500 11.5px/1 Archivo;color:#7d7979;margin-top:6px">Building · 14 assets · 3 plants</div>
+    </div>
+  </div>
+  <div style="padding:16px 16px 0;font:800 12px/1 Archivo;letter-spacing:.14em">PLANT TREE</div>
+  <div style="margin-top:12px;border-top:2px solid #201e1d">
+    <sc-for list="{{ plant }}" as="e" hint-placeholder-count="7">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid rgba(32,30,29,.4);padding-left:{{ e.indent }};background:{{ e.bg }}">
+        <div style="width:8px;height:8px;background:{{ e.dot }};flex:none"></div>
+        <div style="flex:1;font:{{ e.font }};letter-spacing:-.005em">{{ e.n }}</div>
+        <div style="font:600 10px/1 Archivo;letter-spacing:.1em;color:{{ e.sColor }}">{{ e.s }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="padding:18px 16px 0;font:800 12px/1 Archivo;letter-spacing:.14em">CH-1 · SERVICE HISTORY</div>
+  <div style="margin-top:12px;border-top:2px solid #201e1d">
+    <sc-for list="{{ history }}" as="h" hint-placeholder-count="3">
+      <div style="padding:13px 16px;border-bottom:1px solid rgba(32,30,29,.4)">
+        <div style="display:flex;justify-content:space-between;gap:10px">
+          <div style="font:600 10.5px/1 Archivo;letter-spacing:.1em;color:#7d7979;font-variant-numeric:tabular-nums">{{ h.d }}</div>
+          <div style="font:700 10px/1 Archivo;letter-spacing:.1em;color:{{ h.color }}">{{ h.tag }}</div>
+        </div>
+        <div style="font:800 15px/1.2 Archivo;letter-spacing:-.01em;margin-top:8px">{{ h.t }}</div>
+        <div style="font:500 12.5px/1.5 Archivo;color:#444141;margin-top:6px;text-wrap:pretty">{{ h.b }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="margin:18px 16px 24px;background:#ec3013;color:#f3f2f2;padding:16px">
+    <div style="font:800 11px/1 Archivo;letter-spacing:.14em">PATTERN · THIRD EVENT IN 14 MONTHS</div>
+    <div style="font:700 15px/1.35 Archivo;margin-top:10px;text-wrap:pretty">Each one cleared by cleaning, and the approach climbs faster every time. Stop cleaning and go look at the water treatment — the chiller isn't the problem.</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isReport }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;overflow:auto">
+  <div style="display:flex;align-items:stretch;border-bottom:2px solid #201e1d">
+    <div onClick="{{ goSession }}" style="width:46px;border-right:1px solid rgba(32,30,29,.4);display:flex;align-items:center;justify-content:center;font:800 20px/1 Archivo">‹</div>
+    <div style="flex:1;padding:14px">
+      <div style="font:800 17px/1 Archivo;letter-spacing:-.015em">Service report</div>
+      <div style="font:500 11.5px/1 Archivo;color:#7d7979;margin-top:6px">{{ jobNo }} · draft</div>
+    </div>
+  </div>
+  <div style="padding:16px 16px 0">
+    <div style="border:2px solid #201e1d;padding:15px">
+      <div style="font:700 10.5px/1 Archivo;letter-spacing:.14em;color:#7d7979">{{ verifyTag }}</div>
+      <div style="font:800 17px/1.25 Archivo;letter-spacing:-.015em;margin-top:10px;text-wrap:pretty">{{ verifyLine }}</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;border-top:2px solid #201e1d">
+    <sc-for list="{{ report }}" as="r" hint-placeholder-count="8">
+      <div style="padding:13px 16px;border-bottom:1px solid rgba(32,30,29,.4)">
+        <div style="font:700 9.5px/1 Archivo;letter-spacing:.14em;color:#7d7979">{{ r.k }}</div>
+        <div style="font:500 12.5px/1.5 Archivo;margin-top:7px;text-wrap:pretty">{{ r.v }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;margin:0 0 24px">
+    <div style="flex:1;height:54px;background:#ec3013;color:#f3f2f2;display:flex;align-items:center;padding:0 16px;font:800 13px/1 Archivo;letter-spacing:.08em">EXPORT PDF</div>
+    <div onClick="{{ goHome }}" style="width:132px;height:54px;border-left:1px solid rgba(32,30,29,.4);display:flex;align-items:center;padding:0 14px;font:700 11.5px/1 Archivo;letter-spacing:.08em">CLOSE JOB</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ keypadOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.45);z-index:40;display:flex;flex-direction:column;justify-content:flex-end">
+  <div onClick="{{ closeKeypad }}" style="flex:1"></div>
+  <div style="background:#f3f2f2;border-top:2px solid #201e1d;padding:0 0 30px;animation:hvq-rise .16s ease-out">
+    <div style="display:flex;align-items:stretch;border-bottom:2px solid #201e1d">
+      <div style="flex:1;padding:13px 16px">
+        <div style="font:700 10.5px/1 Archivo;letter-spacing:.14em;color:#ae1800">LOG CHANNEL</div>
+        <div style="font:800 16px/1.2 Archivo;letter-spacing:-.01em;margin-top:8px">{{ kpLabel }}</div>
+      </div>
+      <div onClick="{{ closeKeypad }}" style="width:52px;border-left:1px solid rgba(32,30,29,.4);display:flex;align-items:center;justify-content:center;font:700 15px/1 Archivo">✕</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:8px;padding:16px 16px 8px">
+      <div style="font:800 54px/1 Archivo;letter-spacing:-.035em;font-variant-numeric:tabular-nums">{{ kpDraft }}</div>
+      <div style="font:700 15px/1 Archivo;color:#7d7979;padding-bottom:8px">{{ kpUnit }}</div>
+    </div>
+    <div style="padding:0 16px 12px;font:600 11px/1.5 Archivo;letter-spacing:.06em;color:{{ kpHintColor }};min-height:34px;text-wrap:pretty">{{ kpHint }}</div>
+    <div style="border-top:2px solid #201e1d;display:grid;grid-template-columns:1fr 1fr 1fr">
+      <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+        <div onClick="{{ k.press }}" style="height:58px;border-bottom:1px solid rgba(32,30,29,.4);border-right:{{ k.br }};display:flex;align-items:center;justify-content:center;font:800 22px/1 Archivo;background:{{ k.bg }}">{{ k.label }}</div>
+      </sc-for>
+    </div>
+    <div onClick="{{ commitKeypad }}" style="height:56px;background:#ec3013;color:#f3f2f2;display:flex;align-items:center;padding:0 16px;font:800 13.5px/1 Archivo;letter-spacing:.08em">SAVE TO GAUGE SET<span style="margin-left:auto;font:800 17px/1 Archivo">→</span></div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sourcesOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.45);z-index:45;display:flex;flex-direction:column;justify-content:flex-end">
+  <div onClick="{{ closeSources }}" style="flex:1"></div>
+  <div style="background:#f3f2f2;border-top:2px solid #201e1d;padding-bottom:30px;max-height:78%;overflow:auto;animation:hvq-rise .16s ease-out">
+    <div style="display:flex;align-items:stretch;border-bottom:2px solid #201e1d">
+      <div style="flex:1;padding:13px 16px">
+        <div style="font:800 17px/1 Archivo;letter-spacing:-.015em">Sources</div>
+        <div style="font:500 11.5px/1.4 Archivo;color:#605d5d;margin-top:6px">What is quoted, what is a guideline, and what I worked out myself.</div>
+      </div>
+      <div onClick="{{ closeSources }}" style="width:52px;border-left:1px solid rgba(32,30,29,.4);display:flex;align-items:center;justify-content:center;font:700 15px/1 Archivo">✕</div>
+    </div>
+    <sc-for list="{{ sources }}" as="s" hint-placeholder-count="4">
+      <div style="padding:13px 16px;border-bottom:1px solid rgba(32,30,29,.4)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:7px;height:7px;background:{{ s.dot }}"></div>
+          <div style="font:700 10px/1 Archivo;letter-spacing:.12em;color:{{ s.tagColor }}">{{ s.tag }}</div>
+          <div style="margin-left:auto;font:600 10px/1 Archivo;color:#7d7979">{{ s.ref }}</div>
+        </div>
+        <div style="font:700 13.5px/1.3 Archivo;margin-top:9px;text-wrap:pretty">{{ s.title }}</div>
+        <div style="font:500 12px/1.5 Archivo;color:#444141;margin-top:6px;text-wrap:pretty">{{ s.detail }}</div>
+      </div>
+    </sc-for>
+    <div style="padding:14px 16px;font:600 11px/1.6 Archivo;color:#7d7979;text-wrap:pretty">NO SOURCE MEANS NO NUMBER. IF I CAN'T VERIFY A SPECIFICATION FOR THIS EQUIPMENT I SAY SO AND TELL YOU WHAT TO PULL.</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ repairOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;background:rgba(32,30,29,.45);z-index:46;display:flex;flex-direction:column;justify-content:flex-end">
+  <div onClick="{{ closeRepair }}" style="flex:1"></div>
+  <div style="background:#f3f2f2;border-top:2px solid #201e1d;padding-bottom:30px;animation:hvq-rise .16s ease-out">
+    <div style="padding:14px 16px;border-bottom:2px solid #201e1d">
+      <div style="font:800 17px/1 Archivo;letter-spacing:-.015em">What did you fix?</div>
+      <div style="font:500 12px/1.45 Archivo;color:#444141;margin-top:7px;text-wrap:pretty">Then I'll ask for the one reading that has to move if that was really the root cause.</div>
+    </div>
+    <sc-for list="{{ repairOptions }}" as="o" hint-placeholder-count="4">
+      <div onClick="{{ o.press }}" style="padding:16px;border-bottom:1px solid rgba(32,30,29,.4);font:700 14px/1.3 Archivo;display:flex;align-items:center">{{ o.n }}<span style="margin-left:auto;font:800 16px/1 Archivo;color:#ec3013">→</span></div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" style="flex:none" hint-size="412px,892px">
+<div style="min-height:100%;background:#f3f2f2;font-family:Archivo,system-ui,sans-serif;color:#201e1d">
+  <div style="padding:12px 16px 10px;border-bottom:2px solid #201e1d;display:flex;align-items:center;gap:9px">
+    <div style="width:12px;height:12px;background:#ec3013"></div>
+    <div style="font:800 17px/1 Archivo;letter-spacing:-.02em;flex:1">HVACue</div>
+    <div style="font:600 10px/1 Archivo;letter-spacing:.12em;color:#7d7979">SAME SESSION</div>
+  </div>
+  <div style="padding:12px 16px;border-bottom:1px solid rgba(32,30,29,.4)">
+    <div style="font:600 10.5px/1 Archivo;letter-spacing:.12em;color:#7d7979">{{ jobNo }} · {{ depthTag }}</div>
+    <div style="font:800 17px/1.1 Archivo;margin-top:7px;letter-spacing:-.015em">{{ unitName }}</div>
+  </div>
+  <div style="background:#ec3013;color:#f3f2f2;padding:11px 16px;font:800 12px/1 Archivo;letter-spacing:.12em">ALARM · {{ alarmText }}</div>
+  <div style="border-bottom:2px solid #201e1d;display:grid;grid-template-columns:1fr 1fr">
+    <sc-for list="{{ channels }}" as="ch" hint-placeholder-count="6">
+      <div onClick="{{ ch.onEdit }}" style="padding:12px 13px 13px;border-bottom:1px solid rgba(32,30,29,.4);border-right:{{ ch.br }};background:{{ ch.bg }}">
+        <div style="font:600 10px/1.2 Archivo;letter-spacing:.1em;color:{{ ch.labelColor }}">{{ ch.label }}</div>
+        <div style="display:flex;align-items:baseline;gap:4px;margin-top:9px">
+          <div style="font:800 26px/1 Archivo;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:{{ ch.valColor }}">{{ ch.display }}</div>
+          <div style="font:600 11px/1 Archivo;color:#7d7979">{{ ch.unit }}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="padding:14px 16px 0;font:800 12px/1 Archivo;letter-spacing:.14em">TOP CAUSE</div>
+  <sc-if value="{{ hasCauses }}" hint-placeholder-val="{{ false }}">
+  <div style="margin-top:11px;border-top:2px solid #201e1d;border-bottom:2px solid #201e1d;padding:14px 16px">
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <div style="font:800 11px/1 Archivo;letter-spacing:.12em;color:#ec3013;flex:1">{{ topTier }}</div>
+      <div style="font:800 22px/1 Archivo;color:#ec3013;font-variant-numeric:tabular-nums">{{ topPct }}</div>
+    </div>
+    <div style="font:800 16px/1.2 Archivo;margin-top:8px;letter-spacing:-.01em">{{ topName }}</div>
+    <div style="font:500 12.5px/1.5 Archivo;color:#444141;margin-top:8px;text-wrap:pretty">{{ topWhy }}</div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ noData }}" hint-placeholder-val="{{ true }}">
+  <div style="margin:11px 16px 0;border:2px solid #201e1d;padding:14px;font:700 14px/1.35 Archivo;text-wrap:pretty">Nothing logged yet — no ranking, no fabricated confidence.</div>
+  </sc-if>
+  <div style="padding:16px">
+    <div onClick="{{ nextAction }}" style="height:54px;background:#ec3013;color:#f3f2f2;display:flex;align-items:center;padding:0 16px;font:800 13px/1 Archivo;letter-spacing:.08em">{{ nextActionLabel }}<span style="margin-left:auto;font:800 17px/1 Archivo">→</span></div>
+    <div style="font:500 12.5px/1.5 Archivo;color:#444141;margin-top:12px;text-wrap:pretty">{{ nextTitle }}</div>
+  </div>
+</div>
+</x-import>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240,&quot;height&quot;:1000},&quot;confidenceViz&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;bars&quot;,&quot;meter&quot;,&quot;numeric&quot;],&quot;default&quot;:&quot;bars&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Diagnostic display&quot;}}">
+class Component extends DCLogic {
+  state = {
+    screen: 'home', scenario: 'chiller', depth: 'auto', teach: false,
+    readings: { chiller: {}, split: {} },
+    keypad: null, draft: '',
+    repairOpen: false, sourcesOpen: false,
+    repair: { chiller: null, split: null }, verify: { chiller: null, split: null },
+  };
+
+  sc = {
+    chiller: {
+      no: 'JOB #10482', site: 'Bay Tower · Chiller plant', unit: 'CH-1 · 30HXC-186',
+      kind: 'Water-cooled chiller', alarm: 'HIGH DISCHARGE PRESSURE', alarmSrc: 'IOM p.42',
+      chips: ['R-134a', '186 TON', '460V / 3Ø', '2 CIRCUITS', 'SCROLL'],
+      order: ['ecwt', 'lcwt', 'gpm', 'dp', 'amps'],
+      verifyId: 'dp',
+      repairs: ['Cleaned condenser tubes', 'Purged non-condensables', 'Cleared strainer, restored flow', 'Replaced discharge transducer'],
+      defs: {
+        ecwt: { label: 'ENT COND WATER', unit: '°F', lo: 35, hi: 105, prov: 'guide',
+          expected: 'Tower water usually lands 65–85 °F depending on wet-bulb.',
+          why: { b: "Everything on the condenser side gets judged against the water coming in. Without it, a high pressure number tells us nothing.", t: 'Baseline for approach and tower performance.' },
+          how: 'Controller ECW sensor first, then confirm with a clamp probe on the entering pipe.',
+          teach: "The machine dumps its heat into this water. If the water shows up hot, the refrigerant has to condense hotter, and pressure follows temperature. That's why we start here instead of on the gauges." },
+        lcwt: { label: 'LVG COND WATER', unit: '°F', lo: 35, hi: 125, prov: 'guide',
+          expected: 'Look for 8–12 °F above entering at design flow and full load.',
+          why: { b: 'Entering and leaving together give me condenser ΔT, which tells me whether water is actually moving through the barrel.', t: 'ΔT separates flow from heat transfer.' },
+          how: 'Same sensor pair, leaving side. Take both within a minute at steady load.',
+          teach: "Water carries the heat away. Not much water, each gallon picks up more heat, ΔT climbs. Plenty of water and pressure still high? Then the heat isn't crossing into the water at all — that's fouling or air." },
+        gpm: { label: 'COND WATER FLOW', unit: 'GPM', lo: 0, hi: 2500, prov: 'mfr',
+          expected: 'Design flow for this machine is about 1200 GPM.',
+          why: { b: "ΔT is a clue, flow is proof. I'm not letting you pull heads on a clean condenser.", t: 'Confirms the ΔT inference before committing.' },
+          how: 'Plant flow meter, or pump differential pressure read against the pump curve.',
+          teach: 'High ΔT can come from low flow or from high load. Measuring flow kills the ambiguity — this is the test-before-you-replace step.' },
+        dp: { label: 'DISCHARGE PRESS', unit: 'PSIG', lo: 40, hi: 320, prov: 'mfr',
+          expected: 'I convert this to saturation for R-134a — no memorized numbers.',
+          why: { b: 'Converted to saturation temperature this gives condensing temperature, which is the number that actually means something.', t: 'Condensing temp minus LCWT = approach.' },
+          how: 'Controller transducer, then verify against a calibrated gauge on the discharge port before you trust it.',
+          teach: "Pressure alone is not a diagnosis. Turn it into the temperature the refrigerant is condensing at, compare that to the leaving water, and the gap between them — the approach — is what tells you the condenser is dirty." },
+        amps: { label: 'COMP A CURRENT', unit: 'A', lo: 0, hi: 700, prov: 'mfr',
+          expected: 'Should climb with lift. Compare to nameplate RLA.',
+          why: { b: 'High current confirms the compressor really is fighting high head, instead of a transducer lying to both of us.', t: 'Corroborates real lift vs sensor error.' },
+          how: 'Clamp all three legs at the starter and note any imbalance while you are in there.',
+          teach: 'Pressure high but current normal? The machine may not be under high head at all. Suspect the sensor before you condemn the condenser.' },
+      },
+    },
+    split: {
+      no: 'JOB #10517', site: 'Ridge Lane · Residential', unit: '4-ton split · AC condenser + coil',
+      kind: 'R-410A split system', alarm: 'NO COOLING · RUNS BUT WARM', alarmSrc: 'CUSTOMER REPORT',
+      chips: ['R-410A', '4 TON', '240V / 1Ø', 'TXV', 'AGE 11 YR'],
+      order: ['oat', 'rat', 'sat', 'sp', 'slt', 'lp', 'llt'],
+      verifyId: 'sp',
+      repairs: ['Found and repaired leak, weighed in charge', 'Replaced restricted filter-drier', 'Cleaned evaporator coil, restored airflow', 'Replaced TXV'],
+      defs: {
+        oat: { label: 'OUTDOOR AMBIENT', unit: '°F', lo: -20, hi: 130, prov: 'meas',
+          expected: 'Everything on the condenser side scales with this.', why: { b: 'Condensing pressure is supposed to ride above outdoor air. I need the baseline before I call a pressure high.', t: 'Baseline for condenser approach.' },
+          how: 'Shaded dry-bulb reading near the unit, not in direct sun off the coil.',
+          teach: 'A pressure that looks high on a 70° day is normal on a 100° day. Ambient first, always.' },
+        rat: { label: 'RETURN AIR DB', unit: '°F', lo: 40, hi: 110, prov: 'meas',
+          expected: 'Typically 70–80 °F in the return plenum.', why: { b: 'Return and supply give the air-side split, and the split tells me whether the coil is doing work.', t: 'Air ΔT baseline.' },
+          how: 'In the return plenum ahead of the coil, away from any leaks pulling attic air.',
+          teach: 'This is the air going in. Everything about the evaporator gets measured against it.' },
+        sat: { label: 'SUPPLY AIR DB', unit: '°F', lo: 30, hi: 110, prov: 'meas',
+          expected: 'Should land 16–22 °F below return at typical indoor humidity.',
+          why: { b: 'A weak split with normal refrigerant numbers is an airflow story, not a charge story.', t: 'Air ΔT vs refrigerant-side numbers.' },
+          how: 'First supply takeoff past the coil, out of line-of-sight of the coil face.',
+          teach: "The split is your quickest honest read on capacity. Low split with high superheat is charge or restriction. Big split with low airflow is a coil about to freeze." },
+        sp: { label: 'SUCTION PRESS', unit: 'PSIG', lo: 20, hi: 250, prov: 'mfr',
+          expected: 'I convert to saturation for R-410A — pressure by itself proves nothing.',
+          why: { b: "Low suction has at least six causes. This is one input, not an answer.", t: 'Evaporator saturation input.' },
+          how: 'Suction service port with the system stabilized at least 15 minutes.',
+          teach: "Low suction does not mean add refrigerant. It can be low charge, a restriction, low airflow, low load, or the metering device. Superheat is what separates them." },
+        slt: { label: 'SUCTION LINE T', unit: '°F', lo: 0, hi: 140, prov: 'mfr',
+          expected: 'With suction pressure this gives superheat.',
+          why: { b: 'Superheat is how I tell an underfed evaporator from an overfed one.', t: 'Superheat calculation.' },
+          how: 'Clamp probe 6 in from the service valve, insulated, on clean copper.',
+          teach: 'Superheat is how many degrees the vapour picked up after the last drop of liquid boiled off. High means the coil is starved. Near zero means liquid is heading for your compressor.' },
+        lp: { label: 'LIQUID PRESS', unit: 'PSIG', lo: 80, hi: 700, prov: 'mfr',
+          expected: 'Converted to condensing temperature for approach and subcooling.',
+          why: { b: 'With liquid line temperature this gives subcooling — the other half of the charge picture.', t: 'Condensing saturation input.' },
+          how: 'Liquid port at the condenser, same stabilized run.',
+          teach: 'Superheat tells you about the evaporator. Subcooling tells you whether the condenser is actually making solid liquid. You need both before you touch the charge.' },
+        llt: { label: 'LIQUID LINE T', unit: '°F', lo: 20, hi: 180, prov: 'mfr',
+          expected: 'Subcooling of 8–12 °F is typical on a TXV system.',
+          why: { b: 'Low subcooling with high superheat is undercharge. High subcooling with high superheat is a restriction. Same low suction, different repair.', t: 'Subcooling calculation.' },
+          how: 'Clamp probe on the liquid line at the condenser outlet, insulated.',
+          teach: "Two systems can show the same low suction pressure. One needs refrigerant, the other needs a filter-drier. Subcooling is the number that tells them apart — that's why I won't skip it." },
+      },
+    },
+  };
+
+  pt = {
+    r134a: [[71.2, 70], [86.8, 80], [104.3, 90], [124.2, 100], [146.4, 110], [171.2, 120], [198.7, 130], [229.2, 140]],
+    r410a: [[42.5, 10], [58.8, 20], [78.3, 30], [101.6, 40], [129.2, 50], [161.5, 60], [199.0, 70], [242.1, 80], [291.4, 90], [347.4, 100], [410.7, 110], [482.0, 120]],
+  };
+
+  sat(kind, psig) {
+    const t = this.pt[kind];
+    if (psig <= t[0][0]) return t[0][1];
+    for (let i = 1; i < t.length; i++) {
+      if (psig <= t[i][0]) {
+        const a = t[i - 1], b = t[i];
+        return a[1] + (psig - a[0]) * (b[1] - a[1]) / (b[0] - a[0]);
+      }
+    }
+    return t[t.length - 1][1];
+  }
+
+  r() { return this.state.readings[this.state.scenario]; }
+
+  metrics() {
+    const r = this.r(), m = {};
+    if (this.state.scenario === 'chiller') {
+      if (r.ecwt != null && r.lcwt != null) m.dt = r.lcwt - r.ecwt;
+      if (r.dp != null) m.condT = this.sat('r134a', r.dp);
+      if (m.condT != null && r.lcwt != null) m.approach = m.condT - r.lcwt;
+    } else {
+      if (r.rat != null && r.sat != null) m.airDt = r.rat - r.sat;
+      if (r.sp != null) m.evapSat = this.sat('r410a', r.sp);
+      if (m.evapSat != null && r.slt != null) m.sh = r.slt - m.evapSat;
+      if (r.lp != null) m.condT = this.sat('r410a', r.lp);
+      if (m.condT != null && r.llt != null) m.sc = m.condT - r.llt;
+      if (m.condT != null && r.oat != null) m.approach = m.condT - r.oat;
+    }
+    return m;
+  }
+
+  weights() {
+    const r = this.r(), m = this.metrics();
+    if (this.state.scenario === 'chiller') {
+      const w = { flow: 20, foul: 20, ncg: 14, over: 14, tower: 12, sensor: 10 };
+      if (m.dt != null) { if (m.dt > 13) { w.flow += 46; w.foul -= 4; } else if (m.dt < 7) { w.flow -= 14; w.foul += 6; w.over += 4; } else { w.flow -= 12; w.foul += 6; } }
+      if (r.ecwt != null && r.ecwt > 87) w.tower += 34;
+      if (r.gpm != null) { if (r.gpm < 950) w.flow += 42; else { w.flow -= 26; w.foul += 12; w.ncg += 8; } }
+      if (m.approach != null) { if (m.approach > 12) { w.foul += 40; w.ncg += 22; w.sensor -= 4; } else if (m.approach > 7) { w.foul += 18; w.ncg += 8; } else { w.foul -= 16; w.ncg -= 8; w.over += 6; w.sensor += 10; } }
+      if (r.amps != null) { if (r.amps > 380) w.sensor -= 8; else if (r.dp != null && r.dp > 170) w.sensor += 30; }
+      return w;
+    }
+    const w = { charge: 18, restrict: 16, airflow: 18, meter: 14, over: 12, cond: 14, sensor: 6 };
+    if (m.sh != null) { if (m.sh > 20) { w.charge += 38; w.restrict += 18; w.airflow -= 8; w.over -= 8; } else if (m.sh < 5) { w.over += 26; w.meter += 20; w.charge -= 14; w.airflow += 10; } else { w.charge -= 12; w.restrict -= 6; } }
+    if (m.sc != null) { if (m.sc < 4) { w.charge += 30; w.restrict -= 12; w.over -= 8; } else if (m.sc > 15) { w.over += 24; w.restrict += 20; w.charge -= 14; } else { w.charge -= 12; } }
+    if (m.sh != null && m.sc != null && m.sh > 18 && m.sc > 14) w.restrict += 30;
+    if (m.airDt != null) { if (m.airDt > 22) { w.airflow += 32; } else if (m.airDt < 12) { w.airflow -= 6; w.charge += 8; } else { w.airflow -= 10; } }
+    if (m.approach != null) { if (m.approach > 30) { w.cond += 30; } else if (m.approach < 22) { w.cond -= 10; } }
+    return w;
+  }
+
+  meta() {
+    const m = this.metrics(), n = (x, d) => x != null ? x.toFixed(d) : '—';
+    if (this.state.scenario === 'chiller') return {
+      flow: ['Low condenser-water flow', 'Condenser ΔT of ' + n(m.dt, 0) + ' °F against a design 10 °F puts this on the water side, not the refrigerant side. Strainer, valve position, or pump.'],
+      foul: ['Fouled condenser tubes', 'Approach of ' + n(m.approach, 1) + ' °F with flow accounted for means heat is not crossing the tube wall. Scale, biofilm, or mud.'],
+      ncg: ['Non-condensables in the condenser', 'Air or nitrogen sits on top of the refrigerant pressure and never condenses. A standing pressure test separates this from fouling.'],
+      over: ['Refrigerant overcharge', 'Excess charge floods condenser surface and lifts head pressure. Only credible after flow and fouling are cleared, and I want the charge records.'],
+      tower: ['Cooling tower or high entering water', 'Entering water above design lifts the whole circuit. Fan, sump level, fill, wet-bulb — the chiller may be the victim here.'],
+      sensor: ['Transducer or control fault', 'Your readings disagree with each other. Verify against a calibrated gauge before anybody opens anything.'],
+    };
+    return {
+      charge: ['Undercharge / refrigerant leak', 'Superheat ' + n(m.sh, 1) + ' °F with subcooling ' + n(m.sc, 1) + ' °F is the classic starved-coil signature. Find the leak — do not just top it off.'],
+      restrict: ['Liquid-line restriction', 'High superheat with subcooling holding at ' + n(m.sc, 1) + ' °F says the liquid is stacking up before the metering device. Filter-drier first.'],
+      airflow: ['Low evaporator airflow', 'Air split of ' + n(m.airDt, 1) + ' °F points at the air side. Filter, coil face, blower speed, or duct.'],
+      meter: ['Metering device / TXV', 'Superheat that will not respond the way charge and subcooling say it should. Check bulb mounting and contact before condemning the valve.'],
+      over: ['Overcharge or non-condensables', 'Low superheat with high subcooling floods the coil and risks liquid at the compressor. Recover to the specified charge, by weight.'],
+      cond: ['Dirty condenser / high approach', 'Condensing ' + n(m.condT, 0) + ' °F against ' + n(this.r().oat, 0) + ' °F ambient is too much lift for the coil to be clean.'],
+      sensor: ['Instrument or probe error', 'One of these readings contradicts the others. Confirm the tool before you chase the system.'],
+    };
+  }
+
+  causes() {
+    const n = this.sc[this.state.scenario].order.filter(k => this.r()[k] != null).length;
+    if (n < 2) return [];
+    const w = this.weights(), meta = this.meta();
+    let list = Object.keys(w).map(k => ({ k, v: Math.max(1, w[k]) }));
+    const tot = list.reduce((a, b) => a + b.v, 0);
+    list = list.map(x => ({ k: x.k, pct: Math.round(x.v / tot * 100) })).sort((a, b) => b.pct - a.pct);
+    return list.map((x, i) => ({
+      key: x.k, name: meta[x.k][0], why: meta[x.k][1], pct: x.pct, pctText: x.pct + '%',
+      barWidth: x.pct + '%', tier: x.pct >= 45 ? 'MOST LIKELY' : x.pct >= 15 ? 'POSSIBLE' : x.pct >= 7 ? 'LESS LIKELY' : 'UNLIKELY',
+      color: i === 0 ? '#ec3013' : '#201e1d', fill: i === 0 ? '#ec3013' : i === 1 ? '#605d5d' : '#bab6b6',
+      bg: i === 0 ? '#fff2ef' : '#f3f2f2',
+    }));
+  }
+
+  flags() {
+    const r = this.r(), m = this.metrics(), f = [];
+    if (this.state.scenario === 'chiller') {
+      if (m.dt != null && m.dt < 0) f.push('Leaving condenser water reads colder than entering. On a running chiller that cannot happen — check probe placement before I use these numbers.');
+      if (m.approach != null && m.approach < 0) f.push('Your discharge pressure converts to a condensing temperature below the leaving water. One of the two is wrong; put a calibrated gauge on it.');
+      if (r.dp != null && r.dp > 260) f.push('That discharge pressure is past the relief setting. Confirm the gauge, and confirm the machine is actually running.');
+      if (r.amps != null && r.dp != null && r.amps < 120 && r.dp > 170) f.push('High head with low compressor current is contradictory. Confirm which compressor is loaded and re-read all three legs.');
+    } else {
+      if (m.airDt != null && m.airDt < 0) f.push('Supply air warmer than return air. Either the probes are swapped or that coil is not cooling at all — verify before I rank anything.');
+      if (m.sh != null && m.sh < 0) f.push('Negative superheat. Liquid is leaving the evaporator, or the suction probe is not making contact. Sort that out before adding or removing anything.');
+      if (m.airDt != null && m.airDt > 30) f.push('A 30-plus degree air split is not a healthy reading — suspect very low airflow or a probe in the wrong place.');
+      if (r.sp != null && r.oat != null && r.sp > 180) f.push('Suction pressure that high on a call for no cooling usually means the compressor is not pumping. Verify it is running and loaded.');
+    }
+    return f.join(' ');
+  }
+
+  next() {
+    const S = this.sc[this.state.scenario], r = this.r();
+    if (this.state.repair[this.state.scenario] && this.state.verify[this.state.scenario] == null) {
+      const d = S.defs[S.verifyId];
+      return { kind: 'measure', id: S.verifyId, verify: true, title: 'Final ' + d.label.toLowerCase() + ' after the repair', tag: 'VERIFICATION · REQUIRED TO CLOSE',
+        rows: [['WHY', "A repair is not proven until the number that tripped this thing comes back where it belongs."],
+          ['HOW', 'Same load, same entering conditions, let it settle ten minutes, then read it.'],
+          ['EXPECTED', this.state.scenario === 'chiller' ? 'Approach back under about 5 °F at design flow.' : 'Superheat and subcooling both back in range with a normal air split.'],
+          ['IF NORMAL', 'The report closes with before and after on the record.'],
+          ['IF ABNORMAL', "You fixed something, but not the root cause. We go back to the ranking with the new data."]],
+        action: 'LOG FINAL READING', teach: 'Verification is the whole difference between a repair and a parts swap. Same conditions, same measurement, documented both sides of the work.' };
+    }
+    const miss = S.order.find(k => r[k] == null);
+    if (miss) {
+      const d = S.defs[miss], deep = this.depth() === 'tech';
+      return { kind: 'measure', id: miss, title: d.label.charAt(0) + d.label.slice(1).toLowerCase(), tag: 'ONE CHANNEL · ' + d.unit,
+        rows: [['WHY', deep ? d.why.t : d.why.b], ['HOW', d.how], ['EXPECTED', d.expected],
+          ['IF NORMAL', 'I tighten the ranking and hand you the next single test.'],
+          ['IF ABNORMAL', 'I flag it and re-rank before you put a wrench on anything.']],
+        action: 'LOG THIS CHANNEL', teach: d.teach };
+    }
+    const top = this.causes()[0];
+    const T = {
+      flow: { title: 'Prove condenser-water flow at the pump', rows: [['WHY', 'Flow is top-ranked off your ΔT. Confirm it before anybody opens the condenser.'], ['HOW', 'Pump suction and discharge pressure, convert to head, read GPM off the curve. Then strainer differential and valve position.'], ['EXPECTED', 'Head and flow near design on the curve, strainer drop a couple PSI at most.'], ['IF NORMAL', 'Flow is good — fouling moves to the top and we look at tube condition.'], ['IF ABNORMAL', 'Clean the strainer, verify the valve, check impeller and rotation.']], teach: 'Two pressure readings and a pump curve give you flow without a flow meter.' },
+      foul: { title: 'Assess condenser tube condition', rows: [['WHY', 'Flow is accounted for and approach is high, so heat is not crossing the tube wall.'], ['HOW', 'Log approach at steady load, then pull heads and inspect or borescope. Compare to the approach recorded at the last cleaning.'], ['EXPECTED', 'Within about 2 °F of the post-cleaning baseline.'], ['IF NORMAL', 'Tubes are clean — test for non-condensables next.'], ['IF ABNORMAL', 'Clean, re-baseline the approach, then go look at the water treatment.']], teach: 'Approach is the condenser report card: condensing temperature minus leaving water temperature.' },
+      ncg: { title: 'Standing pressure test for non-condensables', rows: [['WHY', 'Pressure is sitting above saturation for the water temperature with tubes and flow accounted for.'], ['HOW', 'Shut down, let refrigerant equalize to condenser water temperature, compare standing pressure to saturation for that temperature.'], ['EXPECTED', 'Standing pressure equals saturation for the measured temperature.'], ['IF NORMAL', 'No air in there — reconsider charge and controls.'], ['IF ABNORMAL', 'Purge, then find how air got in.']], teach: 'Air never condenses, so it takes up condenser volume and adds its own pressure on top of the refrigerant.' },
+      tower: { title: 'Verify tower capacity against wet-bulb', rows: [['WHY', 'Entering water is above design — the chiller may be reacting to a tower problem.'], ['HOW', 'Wet-bulb, compare to entering water; verify fan operation and speed, sump level, spray, fill and basin.'], ['EXPECTED', 'Tower approach to wet-bulb near design, usually single digits.'], ['IF NORMAL', 'Tower is fine, back to the condenser side.'], ['IF ABNORMAL', 'Fix the tower first. Do not chase the chiller.']], teach: 'Chiller alarms very often start outside the chiller. Diagnose the plant, not the box.' },
+      over: { title: 'Pull the charge records before touching charge', rows: [['WHY', 'Overcharge is only credible once flow, fouling and air are cleared.'], ['HOW', 'Charge history and refrigerant added on past calls, then level at the manufacturer condition.'], ['EXPECTED', 'Charge matching nameplate and documented additions.'], ['IF NORMAL', 'Charge is not your cause.'], ['IF ABNORMAL', 'Recover to spec and weigh what comes out.']], teach: 'Never adjust chiller charge off pressure alone — use the manufacturer method.' },
+      sensor: { title: 'Verify the transducer against a calibrated gauge', rows: [['WHY', 'Your readings disagree, so the sensor is a live suspect.'], ['HOW', 'Calibrated gauge on the discharge port, compare to the controller at steady state.'], ['EXPECTED', 'Agreement inside controller tolerance.'], ['IF NORMAL', 'The pressure is real, carry on with the system.'], ['IF ABNORMAL', 'Replace or recalibrate, then re-evaluate before any mechanical work.']], teach: 'Confirm the instrument before you condemn the machine. A bad sensor looks exactly like a bad condenser.' },
+      charge: { title: 'Leak search before any refrigerant goes in', rows: [['WHY', 'The numbers say starved coil, and a system that leaked once will leak again.'], ['HOW', 'Electronic detector on the coil, service valves, line set and brazed joints; bubbles on anything suspect. Then weigh in to nameplate.'], ['EXPECTED', 'A findable leak on an eleven-year-old system.'], ['IF NORMAL', 'No leak found — recheck for a restriction before adding refrigerant.'], ['IF ABNORMAL', 'Repair, evacuate, weigh in the specified charge, then verify superheat and subcooling.']], teach: 'Topping off a leak is a callback with a date on it. Find it, fix it, weigh the charge in.' },
+      restrict: { title: 'Temperature drop across the filter-drier', rows: [['WHY', 'High superheat with subcooling holding is the restriction signature, not an undercharge.'], ['HOW', 'Clamp probes each side of the drier, or feel for a temperature difference and sweating on the outlet.'], ['EXPECTED', 'Almost no temperature drop across a healthy drier.'], ['IF NORMAL', 'Look further downstream — the metering device is next.'], ['IF ABNORMAL', 'Replace the drier, then recheck superheat and subcooling before deciding on charge.']], teach: 'A restriction starves the evaporator the same way a low charge does. The difference is the subcooling, which stacks up behind the blockage.' },
+      airflow: { title: 'Measure static pressure across the air handler', rows: [['WHY', 'The air split says the air side is the limiting factor.'], ['HOW', 'Static pressure taps before and after the coil, filter drop separately, then compare total external static to the blower table.'], ['EXPECTED', 'Total external static at or below the rated value for the selected speed.'], ['IF NORMAL', 'Airflow is fine — back to the refrigerant side.'], ['IF ABNORMAL', 'Filter, coil face, blower speed, duct restriction — in that order.']], teach: 'Low airflow drags suction pressure down and mimics a low charge. Adding refrigerant to a dirty coil freezes it.' },
+      meter: { title: 'Check TXV bulb mounting and response', rows: [['WHY', 'Charge and subcooling say the valve should be feeding more than it is.'], ['HOW', 'Verify bulb position and contact, insulation, then watch superheat respond to a load change.'], ['EXPECTED', 'Superheat settling toward the valve setting as load changes.'], ['IF NORMAL', 'Valve is doing its job — re-examine airflow and load.'], ['IF ABNORMAL', 'Correct the bulb first. Replace the valve only if it still will not respond.']], teach: 'Most valves condemned in the field were only badly mounted bulbs.' },
+      cond: { title: 'Condenser coil and fan check', rows: [['WHY', 'Condensing temperature is riding too far above ambient for a clean coil.'], ['HOW', 'Inspect the coil both sides, verify fan rotation, speed and blade condition, check for recirculation around the unit.'], ['EXPECTED', 'Condensing temperature roughly 20–30 °F over ambient on this equipment class.'], ['IF NORMAL', 'Coil is clear — reconsider charge and non-condensables.'], ['IF ABNORMAL', 'Wash the coil properly, then re-read every channel before judging charge.']], teach: 'A dirty condenser raises head pressure, cuts capacity and shortens compressor life — and it looks like an overcharge on the gauges.' },
+    };
+    const c = T[top ? top.key : 'foul'];
+    return { kind: 'inspect', title: c.title, tag: 'HANDS-ON TEST · TOP-RANKED CAUSE', rows: c.rows, action: 'MARK TEST COMPLETE', teach: c.teach };
+  }
+
+  depth() {
+    if (this.state.depth !== 'auto') return this.state.depth;
+    const n = this.sc[this.state.scenario].order.filter(k => this.r()[k] != null).length;
+    return n >= 3 ? 'tech' : 'beginner';
+  }
+
+  key = (ch) => () => {
+    let d = this.state.draft;
+    if (ch === '⌫') d = d.slice(0, -1);
+    else if (ch === '.') { if (d.indexOf('.') < 0) d += '.'; }
+    else if (d.length < 5) d += ch;
+    this.setState({ draft: d });
+  };
+
+  commitReading = () => {
+    const k = this.state.keypad; if (!k) return;
+    const v = parseFloat(this.state.draft); if (isNaN(v)) return;
+    const s = this.state.scenario;
+    if (k.verify) { this.setState({ verify: { ...this.state.verify, [s]: v }, keypad: null, draft: '', screen: 'report' }); return; }
+    this.setState({ readings: { ...this.state.readings, [s]: { ...this.r(), [k.id]: v } }, keypad: null, draft: '' });
+  };
+
+  go = (s) => () => this.setState({ screen: s, sourcesOpen: false, repairOpen: false });
+
+  renderVals() {
+    const st = this.state, S = this.sc[st.scenario], r = this.r(), m = this.metrics();
+    const causes = this.causes(), next = this.next(), flag = this.flags();
+    const viz = this.props.confidenceViz || 'bars';
+    const INK = '#201e1d', RED = '#ec3013', N6 = '#7d7979';
+    const badKeys = {};
+    if (st.scenario === 'chiller') {
+      if (m.dt != null && m.dt < 0) badKeys.lcwt = 1;
+      if ((m.approach != null && m.approach < 0) || (r.dp != null && r.dp > 260)) badKeys.dp = 1;
+    } else {
+      if (m.airDt != null && m.airDt < 0) badKeys.sat = 1;
+      if (m.sh != null && m.sh < 0) badKeys.slt = 1;
+      if (r.sp != null && r.sp > 180) badKeys.sp = 1;
+    }
+    const provTag = { mfr: 'MFR SPEC', guide: 'GUIDELINE', meas: 'MEASURED' };
+    const channels = S.order.map((id, i) => {
+      const d = S.defs[id], v = r[id], bad = !!badKeys[id];
+      return { label: d.label, unit: v == null ? d.unit : d.unit, display: v == null ? '—' : String(v),
+        note: v == null ? 'TAP TO LOG' : bad ? 'FLAGGED · VERIFY' : provTag[d.prov],
+        noteColor: v == null ? '#9b9797' : bad ? RED : N6,
+        labelColor: bad ? RED : N6, valColor: v == null ? '#bab6b6' : bad ? RED : INK,
+        dot: v == null ? 'transparent' : bad ? RED : '#bab6b6',
+        bg: v == null ? '#eae9e9' : bad ? '#fff2ef' : '#f3f2f2',
+        br: i % 2 === 0 ? '1px solid rgba(32,30,29,.4)' : 'none',
+        onEdit: () => this.setState({ keypad: { id }, draft: '' }) };
+    });
+    const dv = [];
+    const push = (label, value, tag, bad) => dv.push({ label, value, tag, color: bad ? RED : INK, tagColor: bad ? RED : N6 });
+    if (st.scenario === 'chiller') {
+      if (m.dt != null) push('Condenser ΔT', m.dt.toFixed(1) + '°', m.dt > 13 ? 'ABOVE DESIGN — SUSPECT FLOW' : m.dt < 7 ? 'BELOW DESIGN' : 'IN RANGE · 8–12 °F GUIDELINE', m.dt > 13 || m.dt < 7);
+      if (m.condT != null) push('Condensing temp · R-134a', m.condT.toFixed(0) + '°', 'FROM PT RELATIONSHIP', false);
+      if (m.approach != null) push('Condenser approach', m.approach.toFixed(1) + '°', m.approach > 12 ? 'FAR ABOVE BASELINE' : m.approach > 7 ? 'HIGH' : 'NORMAL', m.approach > 7);
+    } else {
+      if (m.airDt != null) push('Air split', m.airDt.toFixed(1) + '°', m.airDt > 22 ? 'WIDE — SUSPECT AIRFLOW' : m.airDt < 14 ? 'NARROW — LOW CAPACITY' : 'IN RANGE · 16–22 °F', m.airDt > 22 || m.airDt < 14);
+      if (m.evapSat != null) push('Evaporator saturation', m.evapSat.toFixed(0) + '°', 'FROM R-410A PT', false);
+      if (m.sh != null) push('Superheat', m.sh.toFixed(1) + '°', m.sh > 20 ? 'HIGH — STARVED COIL' : m.sh < 5 ? 'LOW — FLOODING RISK' : 'IN RANGE', m.sh > 20 || m.sh < 5);
+      if (m.sc != null) push('Subcooling', m.sc.toFixed(1) + '°', m.sc < 4 ? 'LOW' : m.sc > 15 ? 'HIGH — SUSPECT RESTRICTION' : 'IN RANGE · 8–12 °F', m.sc < 4 || m.sc > 15);
+      if (m.approach != null) push('Condenser lift over ambient', m.approach.toFixed(0) + '°', m.approach > 30 ? 'HIGH' : 'NORMAL', m.approach > 30);
+    }
+    const nCount = S.order.filter(k => r[k] != null).length;
+    const seg = (id, label) => ({ label, press: () => this.setState({ depth: id, teach: false }),
+      bg: st.depth === id ? INK : 'transparent', fg: st.depth === id ? '#f3f2f2' : INK,
+      bl: label === 'BEGIN' ? 'none' : '1px solid ' + INK });
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map((ch, i) => ({
+      label: ch, press: this.key(ch), bg: ch === '⌫' ? '#eae9e9' : '#f3f2f2',
+      br: i % 3 === 2 ? 'none' : '1px solid rgba(32,30,29,.4)' }));
+    const kp = st.keypad;
+    let kpLabel = '', kpUnit = '', kpHint = '', kpHintColor = N6;
+    if (kp) {
+      const d = S.defs[kp.id];
+      kpLabel = (kp.verify ? 'FINAL · ' : '') + d.label;
+      kpUnit = d.unit;
+      const v = parseFloat(st.draft);
+      if (!isNaN(v) && (v < d.lo || v > d.hi)) { kpHint = 'OUTSIDE ANYTHING PLAUSIBLE FOR THIS EQUIPMENT — I WILL FLAG IT RATHER THAN USE IT'; kpHintColor = RED; }
+      else kpHint = d.expected.toUpperCase();
+    }
+    const rep = st.repair[st.scenario], ver = st.verify[st.scenario];
+    const top = causes[0];
+    return {
+      isHome: st.screen === 'home', isSession: st.screen === 'session', isFault: st.screen === 'fault',
+      isHistory: st.screen === 'history', isReport: st.screen === 'report',
+      goHome: this.go('home'), goSession: this.go('session'), goFault: this.go('fault'), goHistory: this.go('history'),
+      depthSegs: [seg('beginner', 'BEGIN'), seg('auto', 'AUTO'), seg('tech', 'TECH')],
+      depthTag: st.depth === 'auto' ? 'AUTO · READING ' + this.depth().toUpperCase() : st.depth.toUpperCase(),
+      jobNo: S.no, unitName: S.unit, siteName: S.site + ' · ' + S.kind, alarmText: S.alarm, alarmSrc: S.alarmSrc,
+      chips: S.chips.map(t => ({ t })),
+      jobs: Object.keys(this.sc).map(k => {
+        const s = this.sc[k], n = s.order.filter(x => this.state.readings[k][x] != null).length;
+        return { no: s.no, site: s.site.split(' · ')[0], unit: s.unit, alarm: s.alarm, logged: n + '/' + s.order.length,
+          dot: k === st.scenario ? '#ec3013' : '#201e1d', bg: k === st.scenario ? '#fff2ef' : '#f3f2f2',
+          press: () => this.setState({ scenario: k, screen: 'session' }) };
+      }),
+      tiles: [['01', 'Scan nameplate', 'OCR + model lookup'], ['02', 'Fault code', 'Photo or type'],
+        ['03', 'Photo diagnosis', 'Board, wiring, gauges'], ['04', 'Calculators', '42 tools, offline'],
+        ['05', 'My jobs', 'Buildings & history'], ['06', 'Training', '9 levels · skill map']]
+        .map(([n, title, sub], i) => ({ n, title, sub, br: i % 2 === 0 ? '1px solid rgba(32,30,29,.4)' : 'none',
+          press: n === '02' ? this.go('fault') : n === '05' ? this.go('history') : this.go('session') })),
+      channels, readCount: nCount + '/' + S.order.length,
+      derived: dv, hasDerived: dv.length > 0,
+      hasFlag: flag.length > 0, flagText: flag,
+      causes, hasCauses: causes.length > 0, noData: causes.length === 0,
+      vizBars: viz === 'bars', vizMeter: viz === 'meter',
+      topTier: top ? top.tier : '', topPct: top ? top.pctText : '', topName: top ? top.name : '', topWhy: top ? top.why : '',
+      evidenceTag: nCount === 0 ? 'NO EVIDENCE YET' : 'FROM ' + nCount + ' CHANNEL' + (nCount === 1 ? '' : 'S'),
+      nextHeading: next.kind === 'measure' ? 'CHECK THIS NEXT' : 'NEXT TEST',
+      nextTitle: next.title, nextTag: next.tag,
+      nextRows: next.rows.map(([k, v]) => ({ k, v, color: k === 'IF ABNORMAL' ? RED : N6 })),
+      nextActionLabel: next.action,
+      nextAction: next.kind === 'measure'
+        ? () => this.setState({ screen: 'session', keypad: { id: next.id, verify: next.verify }, draft: '' })
+        : () => this.setState({ screen: 'session', repairOpen: true }),
+      teach: st.teach, teachText: next.teach, teachLabel: st.teach ? 'HIDE' : 'TEACH ME',
+      toggleTeach: () => this.setState({ teach: !st.teach }),
+      canRepair: nCount === S.order.length && !rep, openRepair: () => this.setState({ repairOpen: true }),
+      repairOpen: st.repairOpen, closeRepair: () => this.setState({ repairOpen: false }),
+      repairOptions: S.repairs.map(n => ({ n, press: () => this.setState({ repair: { ...st.repair, [st.scenario]: n }, repairOpen: false, teach: false }) })),
+      keypadOpen: !!kp, kpLabel, kpUnit, kpDraft: st.draft === '' ? '0' : st.draft, kpHint, kpHintColor, keys,
+      closeKeypad: () => this.setState({ keypad: null, draft: '' }), commitKeypad: () => this.commitReading(),
+      sourcesOpen: st.sourcesOpen, openSources: () => this.setState({ sourcesOpen: true }), closeSources: () => this.setState({ sourcesOpen: false }),
+      sources: [
+        { tag: 'MFR SPEC', dot: RED, tagColor: '#ae1800', ref: 'IOM p.42', title: 'Fault code meaning and trip setpoint', detail: 'Quoted from the manufacturer literature cached on this device. Nothing here is paraphrased into a number.' },
+        { tag: 'MFR SPEC', dot: RED, tagColor: '#ae1800', ref: 'PRODUCT DATA p.11', title: 'Design flow and design approach', detail: 'Used as the comparison point for your ΔT and approach on this specific model.' },
+        { tag: 'GUIDELINE', dot: INK, tagColor: INK, ref: 'INDUSTRY REFERENCE', title: 'Typical condenser ΔT and air split ranges', detail: 'General practice, not a specification for your equipment. Where the manufacturer disagrees, the manufacturer wins.' },
+        { tag: 'PT DATA', dot: INK, tagColor: INK, ref: 'REFRIGERANT TABLE', title: 'R-134a and R-410A pressure–temperature relationship', detail: 'Saturation values interpolated from the published table for the refrigerant on the nameplate.' },
+        { tag: 'INFERRED', dot: '#9b9797', tagColor: N6, ref: 'HVACue ENGINE', title: 'Ranking and next-test selection', detail: 'My reasoning over your measurements. It moves every time you log a channel, and it is not a manufacturer position.' },
+        { tag: 'MEASURED', dot: '#9b9797', tagColor: N6, ref: 'THIS SESSION', title: 'Every value on the gauge set', detail: 'Yours, timestamped, kept with the job whether or not this phone has signal.' },
+      ],
+      faultSeq: ['Confirm the machine is running and note the load before anything else.', 'Verify condenser-water flow — pump status, valve position, strainer differential.', 'Read entering and leaving condenser water, compute ΔT.', 'Convert discharge pressure to saturation for the refrigerant on the nameplate.', 'Compute approach against leaving water and compare to the last cleaning baseline.', 'Clamp compressor current to confirm the machine is really under high lift.', 'Test for non-condensables only after flow and fouling are accounted for.'].map((t, i) => ({ n: String(i + 1).padStart(2, '0'), t })),
+      plant: [
+        { n: 'Chiller plant', s: '2 UNITS', indent: '16px', dot: INK, bg: '#eae9e9', font: '800 13.5px/1.2 Archivo', sColor: N6 },
+        { n: 'CH-1 · 30HXC-186', s: 'ALARM', indent: '30px', dot: RED, bg: '#fff2ef', font: '700 13px/1.2 Archivo', sColor: '#ae1800' },
+        { n: 'CH-2 · 30HXC-186', s: 'RUNNING', indent: '30px', dot: '#bab6b6', bg: '#f3f2f2', font: '500 13px/1.2 Archivo', sColor: N6 },
+        { n: 'CT-1 cooling tower', s: 'RUNNING', indent: '30px', dot: '#bab6b6', bg: '#f3f2f2', font: '500 13px/1.2 Archivo', sColor: N6 },
+        { n: 'CWP-1 / CWP-2', s: 'RUN / OFF', indent: '30px', dot: '#bab6b6', bg: '#f3f2f2', font: '500 13px/1.2 Archivo', sColor: N6 },
+        { n: 'Boiler plant', s: '2 UNITS', indent: '16px', dot: INK, bg: '#eae9e9', font: '800 13.5px/1.2 Archivo', sColor: N6 },
+        { n: 'AHU-1 … AHU-4', s: 'ON BAS', indent: '16px', dot: INK, bg: '#eae9e9', font: '800 13.5px/1.2 Archivo', sColor: N6 },
+      ],
+      history: [
+        { d: '2026-03-11', tag: 'CLEARED', color: N6, t: 'High discharge pressure', b: 'Approach 13.8 °F with flow verified. Tubes brush-cleaned, approach back to 4.2 °F before leaving site.' },
+        { d: '2025-08-02', tag: 'CLEARED', color: N6, t: 'High discharge pressure', b: 'Tower sump low, entering water 91 °F. Makeup valve rebuilt. No refrigerant work performed.' },
+        { d: '2025-04-19', tag: 'PM', color: N6, t: 'Annual maintenance', b: 'Baseline approach 3.1 °F recorded, oil analysis normal, no refrigerant added.' },
+      ],
+      verifyTag: ver == null ? 'VERIFICATION PENDING' : 'VERIFIED · BEFORE AND AFTER ON RECORD',
+      verifyLine: ver == null ? 'Log the final reading and this job closes itself.'
+        : st.scenario === 'chiller'
+          ? 'Final discharge pressure ' + ver + ' PSIG → condensing ' + this.sat('r134a', ver).toFixed(0) + ' °F, approach ' + (r.lcwt != null ? (this.sat('r134a', ver) - r.lcwt).toFixed(1) : '—') + ' °F at the same entering water.'
+          : 'Final suction pressure ' + ver + ' PSIG → evaporator saturation ' + this.sat('r410a', ver).toFixed(0) + ' °F, superheat ' + (r.slt != null ? (r.slt - this.sat('r410a', ver)).toFixed(1) : '—') + ' °F at the same conditions.',
+      report: [
+        ['EQUIPMENT', S.unit + ' · ' + S.kind + ' · ' + S.site],
+        ['COMPLAINT', S.alarm],
+        ['GAUGE SET', S.order.filter(k => r[k] != null).map(k => S.defs[k].label + ' ' + r[k] + ' ' + S.defs[k].unit).join(' · ') || '—'],
+        ['DERIVED', dv.map(d => d.label + ' ' + d.value).join(' · ') || '—'],
+        ['ROOT CAUSE', top ? top.name + ' — ' + top.pct + '% at close of diagnosis. ' + top.why : '—'],
+        ['REPAIR', rep || '—'],
+        ['VERIFICATION', ver == null ? 'Pending final readings.' : 'Complaint → diagnosis → repair → verification documented with matched operating conditions.'],
+        ['SOURCES', 'Manufacturer literature for the code meaning and design values, industry guideline for typical ranges, PT table for saturation, and my own reasoning over your measurements — separated in the sources sheet.'],
+      ].map(([k, v]) => ({ k, v })),
+    };
+  }
+}
+</script>
+</body>
+</html>
