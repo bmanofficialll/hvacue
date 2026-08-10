@@ -1,0 +1,58 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0A0C0E;
+  font-family: Archivo, system-ui, sans-serif;
+  color: #E8EBED;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100%;
+}
+
+a {
+  color: #FFB020;
+  text-decoration: none;
+}
+a:hover {
+  color: #FFC85E;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+@keyframes hvq-scan {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(150px); }
+}
+@keyframes hvq-blip {
+  0%, 100% { opacity: .25; }
+  50% { opacity: 1; }
+}
+@keyframes hvq-rise {
+  from { transform: translateY(14px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes hvq-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

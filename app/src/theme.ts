@@ -1,0 +1,65 @@
+// Design tokens for the "dark instrument" aesthetic — ported 1:1 from HVACue.dc.html.
+export const color = {
+  appBg: '#0A0C0E',
+  text: '#E8EBED',
+  textDim: '#7E888F',
+  textDimmer: '#4F585E',
+  textFaint: '#5F696F',
+  textMuted: '#8B959C',
+  textBody: '#CDD4D8',
+  textRow: '#B9C1C6',
+
+  card: '#15191D',
+  cardAlt: '#12171B',
+  cardFlush: '#101418',
+  sheet: '#111518',
+  chipBg: '#1B2126',
+
+  border: 'rgba(255,255,255,.08)',
+  borderSoft: 'rgba(255,255,255,.06)',
+  borderMed: 'rgba(255,255,255,.07)',
+  borderStrong: 'rgba(255,255,255,.09)',
+  borderStrong2: 'rgba(255,255,255,.14)',
+  borderDashed: 'rgba(255,255,255,.16)',
+
+  amber: '#FFB020',
+  amberHi: '#FFC85E',
+  amberSoft: '#FFC04A',
+  amberOn: '#171203',
+  amberBorder30: 'rgba(255,176,32,.3)',
+  amberBorder32: 'rgba(255,176,32,.32)',
+  amberBorder35: 'rgba(255,176,32,.35)',
+  amberBg07: 'rgba(255,176,32,.07)',
+  amberBg08: 'rgba(255,176,32,.08)',
+  amberBg12: 'rgba(255,176,32,.12)',
+
+  cyan: '#4FD1E0',
+  cyanOn: '#08181B',
+  cyanBorder: 'rgba(79,209,224,.35)',
+  cyanBorder25: 'rgba(79,209,224,.25)',
+  cyanBorder28: 'rgba(79,209,224,.28)',
+  cyanBorder4: 'rgba(79,209,224,.4)',
+  cyanBorder55: 'rgba(79,209,224,.55)',
+  cyanBg07: 'rgba(79,209,224,.07)',
+  cyanBg08: 'rgba(79,209,224,.08)',
+  cyanBg1: 'rgba(79,209,224,.1)',
+
+  red: '#FF5A47',
+  redSoft: '#FF8A7A',
+  redSofter: '#FFC2B8',
+  redBorder35: 'rgba(255,90,71,.35)',
+  redBorder4: 'rgba(255,90,71,.4)',
+  redBorder5: 'rgba(255,90,71,.5)',
+  redBg09: 'rgba(255,90,71,.09)',
+  redBg12: 'rgba(255,90,71,.12)',
+
+  green: '#4ADE9A',
+  greenBorder4: 'rgba(74,222,154,.4)',
+  greenBorder35: 'rgba(74,222,154,.35)',
+  greenBg08: 'rgba(74,222,154,.08)',
+} as const;
+
+export const font = {
+  heading: 'Archivo, system-ui, sans-serif',
+  mono: "'IBM Plex Mono', monospace",
+};
